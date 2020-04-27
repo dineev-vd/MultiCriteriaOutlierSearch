@@ -1,0 +1,15 @@
+﻿@using outliers_lib
+<div class="custom-control custom-checkbox mb-3">
+    <input type="checkbox" class="custom-control-input" id="customControlValidation1" @onchange="@((ChangeEventArgs __e) => Mod.Name = __e.Value.ToString())" checked="@Item.Value.Default">
+    <label class="custom-control-label" for="customControlValidation1">@Item.Key</label>
+</div>
+
+@code
+{
+    [Parameter]
+    public KeyValuePair<string, Parameters> Item { get; set; }
+
+    [Parameter]
+    public Module Mod { get; set; }
+
+}

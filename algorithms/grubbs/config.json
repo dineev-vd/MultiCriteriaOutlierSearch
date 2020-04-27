@@ -1,0 +1,14 @@
+{
+    "alpha":{
+        "required":true,
+        "type":"double",
+        "min":0.01,
+        "max":1,
+        "default":0.01
+    },
+    "someBool":{
+        "required":true,
+        "type":"bool",
+        "default":true
+    }
+}

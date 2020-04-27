@@ -1,0 +1,139 @@
+﻿<form class="needs-validation">
+    <h4>Алгоритмы</h4>
+    <h6 class="text-muted mb-2">Список алгоритмов для выполнения</h6>
+    <div role="tablist" id="accordion-1">
+        @for (int i = 0; i < UserInstance.Algorithms.Count; i++)
+        {
+            <ModulePage Id="@i" Mod="@UserInstance.Algorithms[i]" Config="@Config.Algorithms" Accordeon="1"></ModulePage>
+        }
+    </div>
+    <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClick">Добавить алгоритм</button>
+
+
+    <h4>Комбинации</h4>
+    <h6 class="text-muted mb-2">Список комбинаций для выполнения</h6>
+    <div role="tablist" id="accordion-2">
+
+        @for (int i = UserInstance.Algorithms.Count; i < UserInstance.Combinations.Count + UserInstance.Algorithms.Count; i++)
+        {
+            <ModulePage Id="@i" Mod="@UserInstance.Combinations[i-UserInstance.Algorithms.Count]" Config="@Config.Combinations" Accordeon="2"></ModulePage>
+        }
+    </div>
+    <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClickCombs">Добавить комбинацию</button>
+
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text">With textarea</span>
+        </div>
+        <textarea class="form-control" aria-label="With textarea" @bind="values"></textarea>
+    </div>
+
+    <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="Send">Отправить</button>
+</form>
+
+@if (!(responses is null))
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">value</th>
+                @foreach (var resp in responses)
+                {
+                    <th scope="col">@resp.Name</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for(int i = 0; i < responses.First().Data.Count; i++)
+            {
+                <tr>
+                    <th scope="row">@(i+1)</th>
+                    <td>@UserInstance.Values[i]</td>
+                    @foreach(var resp in responses)
+                    {
+                        <td>@resp.Data[i]</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<p>@req</p>
+
+@using outliers_lib
+@using Newtonsoft.Json
+@using System.Runtime.CompilerServices
+@inject IJSRuntime IJSRuntime
+@code {
+    OutlierRequestData UserInstance { get; set; }
+    Config Config { get; set; }
+    string str { get; set; }
+    string req { get; set; }
+    string values { get; set; } = "";
+    List<ModuleResponse> responses { get; set; }
+
+    public Algorithms()
+    {
+        Config = new Config();
+        UserInstance = new OutlierRequestData();
+        FetchData();
+    }
+
+    public async void FetchData()
+    {
+        HttpClient client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/api/config/");
+        var response = await client.SendAsync(request);
+        Config = JsonConvert.DeserializeObject<Config>(await response.Content.ReadAsStringAsync(), new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+        StateHasChanged();
+    }
+
+    public void OnInput(ChangeEventArgs eventArgs)
+    {
+
+    }
+
+    public void OnClick()
+    {
+        UserInstance.Algorithms.Add(new Module());
+    }
+
+    public void OnClickCombs()
+    {
+        UserInstance.Combinations.Add(new Module());
+    }
+
+    public class UIModule : Module
+    {
+        public int Id { get; set; }
+
+        public UIModule(int id)
+        {
+            Id = id;
+        }
+    }
+
+    public async void Send()
+    {
+        List<double> result = values.Split(',').Select(x => double.Parse(x)).ToList();
+        UserInstance.Values = result;
+
+        HttpClient client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/api/api/");
+        request.Content = new StringContent(JsonConvert.SerializeObject(UserInstance), System.Text.Encoding.UTF8, "application/json");
+        var response = await client.SendAsync(request);
+        var algsandcombs = JsonConvert.DeserializeObject<Responses>(await response.Content.ReadAsStringAsync());
+        responses = algsandcombs.AlgResponses;
+        str = await response.Content.ReadAsStringAsync();
+        req = await request.Content.ReadAsStringAsync();
+        StateHasChanged();
+    }
+
+    public struct Responses
+    {
+        public List<ModuleResponse> AlgResponses { get; set; }
+        public List<ModuleResponse> CombResponses { get; set; }
+    }
+}

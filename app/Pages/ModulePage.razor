@@ -1,0 +1,187 @@
+﻿<div class="card collapse" id="card-@Id">
+    <form class="needs-validation">
+        <div role="tab" class="card-header">
+            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-@Accordeon .item-@Id" href="#accordion-@Accordeon .item-@Id">Accordion Item</a></h5>
+        </div>
+        <div role="tabpanel" data-parent="#accordion-@Accordeon" class="collapse show item-@Id">
+            <div class="card-body">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="@Id 1" name="customRadioInline @Id" class="custom-control-input" @onchange="@EnableName" checked>
+                    <label class="custom-control-label" for="@Id 1">Внутренний</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="@Id 2" name="customRadioInline @Id" class="custom-control-input" @onchange="@DisableName">
+                    <label class="custom-control-label" for="@Id 2">Внешний</label>
+                </div>
+                @*Переключатель для внутренний/внешний*@
+                @if (Mod.Internal)
+                {
+                    <div class="collapse show" id="choose_@Id">
+                        <div class="input-group" style="margin-top: 8px;">
+                            <div class="input-group-prepend"><span class="input-group-text">Addon</span></div><select class="custom-select" @onchange="@OnSelect">
+                                <option label="Выберите алгоритм..." disabled selected>choose</option>
+                                @foreach (var module in Config)
+                                {
+                                    <option label="@module.Value.CoolName">@module.Key</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+                
+                @*Имя*@
+                <div class="input-group" style="margin-bottom: 8px; margin-top:8px;">
+                    <div class="input-group-prepend"><span class="input-group-text">Имя</span></div><input type="text" class="form-control" value="@Mod.Name" />
+                </div>
+                
+                @*Параметры*@
+                @foreach (var item in Selected.Options)
+                {
+                    @if (item.Value.Type == "double")
+                    {
+                        <DoubleParameter Mod="@Mod" Item="@item"></DoubleParameter>
+                    }
+
+                    @if (item.Value.Type == "string")
+                    {
+
+                    }
+
+                    @if (item.Value.Type == "bool")
+                    {
+                        <BoolParameter Mod="@Mod" Item="@item"></BoolParameter>
+                    }
+                }
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+@inject IJSRuntime IJSRuntime;
+@using outliers_lib
+@using System.Globalization
+@code {
+    [Parameter]
+    public int Accordeon { get; set; }
+
+    [Parameter]
+    public Dictionary<string, ModuleSettings> Config { get; set; }
+
+    public ModuleSettings Selected { get; set; } = new ModuleSettings();
+    public ModuleSettings LastChoice { get; set; } = new ModuleSettings();
+
+    public string value;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public Module Mod { get; set; }
+
+    public bool Disabled { get; set; }
+
+    public string Name { get; set; }
+
+    public void OnSelect(ChangeEventArgs args)
+    {
+        if (args.Value.ToString() == "choose")
+        {
+            Selected = new ModuleSettings();
+            return;
+        }
+
+        Selected = Config[args.Value.ToString()];
+        Mod.Params.Clear();
+        Mod.Name = args.Value.ToString();
+        foreach (var o in Selected.Options)
+        {
+            if(o.Value.Type == "double")
+            {
+                Mod.Params.Add(o.Key, o.Value.Default);
+                continue;
+            }
+
+            if(o.Value.Type == "bool")
+            {
+                Mod.Params.Add(o.Key, o.Value.Default);
+                continue;
+            }
+
+            Mod.Params.Add(o.Key, null);
+        }
+    }
+
+    public void EnableName(ChangeEventArgs args)
+    {
+        //Disabled = false
+        Mod.Internal = true;
+        Selected = LastChoice;
+        //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "show");
+    }
+
+    public void DisableName(ChangeEventArgs args)
+    {
+        //Disabled = true;
+        //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "hide");
+        Mod.Internal = false;
+        LastChoice = Selected;
+        Selected = new ModuleSettings();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        IJSRuntime.InvokeVoidAsync("myCollapse", $"card-{Id}", "show");
+        base.OnAfterRender(firstRender);
+    }
+
+    public void ChangeValue(ChangeEventArgs value, KeyValuePair<string, Parameters> o)
+    {
+        if((string)value.Value == String.Empty)
+        {
+            Mod.Params[o.Key] = o.Value.Default;
+            return;
+        }
+
+        try
+        {
+            Mod.Params[o.Key] = double.Parse((string)value.Value, CultureInfo.InvariantCulture);
+        }
+        catch
+        {
+            Mod.Params[o.Key] = "error";
+
+        }
+    }
+
+    public bool IsValidDouble(object value, Parameters pars)
+    {
+        if (!(value is double))
+        {
+            return false;
+        }
+
+        if (pars.Max >= 0 && (double)value > pars.Max)
+        {
+            return false;
+        }
+
+        if (pars.Min >= 0 && (double)value < pars.Min)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool IsValidBool(object value, Parameters pars)
+    {
+        if (!(value is bool))
+        {
+            return false;
+        }
+
+        return true;
+    }
+}
