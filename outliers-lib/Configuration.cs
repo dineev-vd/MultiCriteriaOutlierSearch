@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Net.Http;
 
+//TODO Проверка конфигурации модулей на корректность
+
 namespace outliers_lib
 {
     public static class Configuration

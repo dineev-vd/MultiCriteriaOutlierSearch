@@ -8,8 +8,8 @@ app = Flask(__name__)
 @app.route('/<path:path>', methods=['POST'])
 def majority_get(path):
     try:
-        array = request.json
+        array = request.json['Data']
         result = average(np.transpose(array))
         return jsonify(result.tolist())
     except:
-        return jsonify("error")
+        return jsonify("error"), 400

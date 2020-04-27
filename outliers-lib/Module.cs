@@ -25,22 +25,28 @@ namespace outliers_lib
         }
         public async Task<HttpRequestMessage> MakeRequest(object data)
         {
-            string uri;
+            string uri = string.Empty;
             if (!Internal)
             {
                 uri = Uri;
             }
             else
             {
-                try
+                var config = await Configuration.Read();
+                if (config.Algorithms.ContainsKey(Name))
                 {
-                    var config = await Configuration.Read();
                     uri = config.Algorithms[Name].Uri;
                 }
-                catch
+
+                if (config.Combinations.ContainsKey(Name))
                 {
-                    throw new ArgumentException($"cant resolve internal name : {Name}");
+                    uri = config.Combinations[Name].Uri;
                 }
+            }
+
+            if (uri == string.Empty)
+            {
+                throw new ArgumentException($"cant resolve internal name : {Name}");
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, uri);

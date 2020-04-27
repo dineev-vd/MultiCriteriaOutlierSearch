@@ -34,10 +34,11 @@ namespace outliers_lib
         }
     }
 
-    public struct ConfigModule
+    abstract class ConfigModule
     {
         public string Name { get; set; }
         public string Params { get; set; }
     }
+    
     
 }

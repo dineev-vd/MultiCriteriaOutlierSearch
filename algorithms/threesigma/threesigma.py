@@ -20,5 +20,5 @@ def threesigma(path):
         for i in indices:
             a[i] = 1
     except:
-        return jsonify("error:threesigma")
+        return jsonify("error:threesigma"), 400
     return jsonify(a)

@@ -91,5 +91,7 @@ def dixon():
             for i in [j for j, x in enumerate(data) if x == outlier]:
                 indices[i] = 1
     except:
-        return jsonify("error:dixon")
+        return jsonify("error:dixon"), 400
     return jsonify(indices)
+
+"""ccc"""

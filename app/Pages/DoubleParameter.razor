@@ -5,7 +5,7 @@
     <div class="input-group-prepend">
         <span class="input-group-text">@Item.Key</span>
     </div>
-    <input type="text" class="form-control @(IsValidDouble(Mod.Params[Item.Key], Item.Value) ? "is-valid" : "is-invalid")" @oninput=@(e => ChangeValue(e, Item, Mod)) required/>
+    <input type="text" placeholder="default:@Item.Value.Default" class="form-control @(IsValidDouble(Mod.Params[Item.Key], Item.Value) ? "is-valid" : "is-invalid")" @oninput=@(e => ChangeValue(e, Item, Mod)) required/>
     <div class="invalid-feedback">
         Число должно быть в промежутке от @Item.Value.Min до @Item.Value.Max.
     </div>
