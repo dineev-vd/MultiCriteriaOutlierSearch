@@ -1,0 +1,55 @@
+﻿<div class="card-body">
+    <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" id="@Id 1" name="customRadioInline @Id" class="custom-control-input" @onchange="@EnableName" checked="@Mod.IsInternal">
+        <label class="custom-control-label" for="@Id 1">Внутренний</label>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" id="@Id 2" name="customRadioInline @Id" class="custom-control-input" @onchange="@DisableName" checked="@(!Mod.IsInternal)">
+        <label class="custom-control-label" for="@Id 2">Внешний</label>
+    </div>
+    @*Переключатель для внутренний/внешний*@
+
+    <div class="collapse @(Mod.IsInternal ? "show" : "")">
+        <Internal Mod=@Mod.Internal Config=@Config></Internal>
+    </div>
+
+    <div class="collapse @(Mod.IsInternal ? "" : "show")">
+        <External Mod=@Mod.External></External>
+    </div>
+</div>
+
+
+@inject IJSRuntime IJSRuntime;
+@using Data
+@using OutliersLib
+
+@code {
+    [Parameter]
+    public Dictionary<string, ModuleSettings> Config { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public PowerCouple Mod { get; set; }
+
+    public void EnableName(ChangeEventArgs args)
+    {
+        Mod.IsInternal = true;
+        //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "show");
+    }
+
+    public void DisableName(ChangeEventArgs args)
+    {
+        //Disabled = true;
+        Mod.IsInternal = false;
+        //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "hide");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        IJSRuntime.InvokeVoidAsync("myCollapse", $"card-{Id}", "show");
+        base.OnAfterRender(firstRender);
+    }
+
+}

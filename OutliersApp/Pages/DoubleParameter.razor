@@ -1,0 +1,24 @@
+﻿@using OutliersLib
+@using Data
+
+
+<div class="input-group" style="margin-bottom: 8px;">
+    <div class="input-group-prepend">
+        <span class="input-group-text">@Item.Key</span>
+    </div>
+    <input type="text" placeholder="default:@Item.Value.Default" class="form-control @(Utils.IsValidDouble(Mod.Params[Item.Key], Item.Value) ? "is-valid" : "is-invalid")" @oninput=@(e => Utils.ChangeValue(e, Item, Mod)) required/>
+    <div class="invalid-feedback">
+        Число должно быть в промежутке от @Item.Value.Min до @Item.Value.Max.
+    </div>
+</div>
+
+
+@code{
+
+    [Parameter]
+    public KeyValuePair<string, Parameters> Item { get; set; }
+
+    [Parameter]
+    public NameModule Mod { get; set; }
+
+}

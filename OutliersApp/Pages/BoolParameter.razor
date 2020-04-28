@@ -1,0 +1,18 @@
+﻿@using OutliersLib
+@using Data
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" class="custom-control-input" id="customControlValidation1" @onchange="@((ChangeEventArgs eventArgs) => Mod.Params[Item.Key] = bool.Parse(eventArgs.Value.ToString()))" checked="@Item.Value.Default">
+    <label class="custom-control-label" for="customControlValidation1">@Item.Key</label>
+</div>
+
+@*TODO Сделать зависимость id От ID*@
+
+@code
+{
+    [Parameter]
+    public KeyValuePair<string, Parameters> Item { get; set; }
+
+    [Parameter]
+    public NameModule Mod { get; set; }
+
+}

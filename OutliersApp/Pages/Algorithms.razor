@@ -1,0 +1,192 @@
+﻿<form class="needs-validation">
+    <h4>Алгоритмы</h4>
+    <h6 class="text-muted mb-2">Список алгоритмов для выполнения</h6>
+    <div role="tablist" id="accordion-1">
+        @{ var local = 0; }
+        @foreach (var item in UserInstance.Algorithms)
+        {
+            <div class="card" id="card-@local">
+                <form class="needs-validation">
+                    <div role="tab" class="card-header">
+                        <h5 class="mb-0">
+                            <a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-1 .item-@local" href="#accordion-1 .item-@local">Accordion Item</a>
+                        </h5>
+                        <button class="btn btn-primary" type="button" @onclick="@((e) => { UserInstance.Algorithms.Remove(item);})">Удалить</button>
+                    </div>
+                    <div role="tabpanel" data-parent="#accordion-1" class="collapse show item-@local">
+                        <ModulePage @key=item Id="@local" Mod="item" Config="@Config.Algorithms"></ModulePage>
+                    </div>
+                </form>
+            </div>
+            local++;
+        }
+    </div>
+    <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClick">Добавить алгоритм</button>
+
+    @*TODO: Разобраться с удалением (удаляется всегда последний)*@
+
+    <h4>Комбинации</h4>
+    <h6 class="text-muted mb-2">Список комбинаций для выполнения</h6>
+    <div role="tablist" id="accordion-2">
+        @foreach (var item in UserInstance.Combinations)
+        {
+            <div class="card" id="card-@local">
+                <form class="needs-validation">
+                    <div role="tab" class="card-header">
+                        <h5 class="mb-0">
+                            <a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-2 .item-@local" href="#accordion-2 .item-@local">Accordion Item</a>
+                        </h5>
+                        <button class="btn btn-primary" type="button" @onclick="@((e) => UserInstance.Combinations.Remove(item))">Удалить</button>
+                    </div>
+                    <div role="tabpanel" data-parent="#accordion-1" class="collapse show item-@local">
+                        <ModulePage @key=item Id="@local" Mod="item" Config="@Config.Combinations"></ModulePage>
+                    </div>
+                </form>
+            </div>
+            local++;
+        }
+    </div>
+    <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClickCombs">Добавить комбинацию</button>
+
+    <div class="input-group">
+        <textarea class="form-control @(TextValid ? "" : "invalid")" aria-label="With textarea" @bind="@values" @oninput=@((e) => TextValid = true) placeholder="Значения через запятую..."></textarea>
+    </div>
+
+    <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="Send">Отправить</button>
+</form>
+
+@if (!(responses.AlgResponses is null))
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">value</th>
+            @foreach (var resp in responses.AlgResponses)
+            {
+                if (resp.Value.Status == "OK")
+                {
+                    <th scope="col">@resp.Key</th>
+                }
+            }
+            @foreach (var resp in responses.CombResponses)
+            {
+                if (resp.Value.Status == "OK")
+                {
+                    <th scope="col">@resp.Key</th>
+                }
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < valueList.Count; i++)
+        {
+            local = i;
+            <tr>
+                <th scope="row">@(local + 1)</th>
+                <td>@valueList[local]</td>
+                @foreach (var resp in responses.AlgResponses)
+                {
+                    @if (resp.Value.Status == "OK")
+                    {
+                        <td>@resp.Value.Data[local]</td>
+                    }
+                }
+                @foreach (var resp in responses.CombResponses)
+                {
+                    @if (resp.Value.Status == "OK")
+                    {
+                        <td>@resp.Value.Data[local]</td>
+                    }
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@*TODO Проверка на корректность формы
+*@
+
+@using Newtonsoft.Json
+@using OutliersLib
+@using Data
+@inject IJSRuntime IJSRuntime
+
+@code {
+    DataTemlpate UserInstance { get; set; }
+    Config Config { get; set; }
+    string str { get; set; }
+    string req { get; set; }
+    string values { get; set; } = "";
+    List<double> valueList = new List<double>();
+    Responses responses { get; set; }
+    bool TextValid { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Config = new Config();
+        UserInstance = new DataTemlpate();
+        await FetchData();
+        await base.OnInitializedAsync();
+    }
+
+    public async Task FetchData()
+    {
+        HttpClient client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/api/config/");
+        var response = await client.SendAsync(request);
+        Config = JsonConvert.DeserializeObject<Config>(await response.Content.ReadAsStringAsync(), new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+        StateHasChanged();
+    }
+
+    public void OnInput(ChangeEventArgs eventArgs)
+    {
+    }
+
+    public void OnClick()
+    {
+        UserInstance.Algorithms.Add(new PowerCouple());
+    }
+
+    public void OnClickCombs()
+    {
+        UserInstance.Combinations.Add(new PowerCouple());
+    }
+
+    public async void Send()
+    {
+        List<double> result;
+        try
+        {
+            result = values.Split(',').Select(x => double.Parse(x)).ToList();
+        }
+        catch
+        {
+            TextValid = false;
+            return;
+        }
+
+        UserInstance.Values = result;
+
+        HttpClient client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/api/api/");
+        request.Content = new StringContent(JsonConvert.SerializeObject(UserInstance.ToRequestData()), System.Text.Encoding.UTF8, "application/json");
+        var response = await client.SendAsync(request);
+        var algsandcombs = JsonConvert.DeserializeObject<Responses>(await response.Content.ReadAsStringAsync());
+        responses = algsandcombs;
+        valueList = result;
+        str = await response.Content.ReadAsStringAsync();
+        req = await request.Content.ReadAsStringAsync();
+        Console.WriteLine(str);
+        Console.WriteLine(req);
+        StateHasChanged();
+    }
+
+    public struct Responses
+    {
+        public Dictionary<string, ModuleResponse> AlgResponses { get; set; }
+        public Dictionary<string, ModuleResponse> CombResponses { get; set; }
+    }
+
+}
