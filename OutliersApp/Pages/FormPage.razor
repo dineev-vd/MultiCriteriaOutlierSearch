@@ -1,0 +1,221 @@
+﻿<form class="needs-validation">
+    <div class="container mb-4 border rounded p-3">
+        <h4>Алгоритмы</h4>
+        <h6 class="text-muted mb-2">Список алгоритмов для выполнения</h6>
+        <div role="tablist" id="accordion-1">
+            @{ var id = 0; }
+            @foreach (var item in UserInstance.Algorithms)
+            {
+                string local = id + "-1";
+                <div class="card mb-2" id="card-@local">
+                    <form class="needs-validation">
+                        <div role="tab" class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="mb-0">
+                                        <a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-1 .item-@local" href="#accordion-1 .item-@local">Accordion Item</a>
+                                    </h5>
+                                </div>
+                                <div class="col">
+                                    <input type="text" placeholder="default=1" class="form-control" required/>
+                                </div>
+                                <div class="col-reverse">
+                                    <button class="btn btn-danger mr-2" type="button" @onclick="@((e) => { UserInstance.Algorithms.Remove(item); })">Удалить</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" data-parent="#accordion-1" class="collapse show item-@local">
+                            <ModuleFormPage @key=item Id="@local" ModuleForm="@item"></ModuleFormPage>
+                        </div>
+                    </form>
+                </div>
+                id++;
+            }
+        </div>
+        <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClick">Добавить алгоритм</button>
+    </div>
+
+    @*TODO: Разобраться с удалением (удаляется всегда последний)*@
+    <div class="container mb-4 border rounded p-3">
+        <h4>Комбинации</h4>
+        <h6 class="text-muted mb-2">Список комбинаций для выполнения</h6>
+        <div role="tablist" id="accordion-2">
+            @{ var idd = 0; }
+            @foreach (var item in UserInstance.Combinations)
+            {
+                string local = idd + "-2";
+                <div class="card mb-2" id="card-@local">
+                    <form class="needs-validation">
+                        <div role="tab" class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="mb-0">
+                                        <a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-2 .item-@local" href="#accordion-2 .item-@local">Accordion Item</a>
+                                    </h5>
+                                </div>
+                                <div class="col">
+                                    <input type="text" placeholder="default=1" class="form-control" required/>
+                                </div>
+                                <div class="col-reverse">
+                                    <button class="btn btn-danger mr-2" type="button" @onclick="@((e) => UserInstance.Combinations.Remove(item))">Удалить</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" data-parent="#accordion-1" class="collapse show item-@local">
+                            <ModuleFormPage @key=item Id="@local" ModuleForm="@item"></ModuleFormPage>
+                        </div>
+                    </form>
+                </div>
+                idd++;
+            }
+        </div>
+        <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClickCombs">Добавить комбинацию</button>
+    </div>
+
+    <div class="container mb-4 border rounded p-3">
+        <div class="input-group mb-4">
+            <textarea class="form-control @(TextValid ? "" : "invalid")" aria-label="With textarea" @bind="@values" @oninput=@((e) => TextValid = true) placeholder="Значения через запятую..."></textarea>
+        </div>
+        <button class="btn btn-success btn-block btn-sm" type="button" @onclick="Send">Отправить</button>
+    </div>
+</form>
+
+@if (!(responses.AlgResponses is null))
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">value</th>
+            @foreach (var resp in responses.AlgResponses)
+            {
+                if (resp.Status == "OK")
+                {
+                    <th scope="col">@resp.Name</th>
+                }
+            }
+            @foreach (var resp in responses.CombResponses)
+            {
+                if (resp.Status == "OK")
+                {
+                    <th scope="col">@resp.Name</th>
+                }
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < valueList.Count; i++)
+        {
+            <tr>
+                <th scope="row">@(i + 1)</th>
+                <td>@valueList[i]</td>
+                @foreach (var resp in responses.AlgResponses)
+                {
+                    @if (resp.Status == "OK")
+                    {
+                        <td>@resp.Data[i]</td>
+                    }
+                }
+                @foreach (var resp in responses.CombResponses)
+                {
+                    @if (resp.Status == "OK")
+                    {
+                        <td>@resp.Data[i]</td>
+                    }
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@*TODO Проверка на корректность формы
+*@
+
+@using Newtonsoft.Json
+@using OutliersLib
+@using Data
+@inject IJSRuntime IJSRuntime
+
+@code {
+    Form UserInstance { get; set; }
+    Config Config { get; set; }
+    string str { get; set; }
+    string req { get; set; }
+    string values { get; set; } = "";
+    List<double> valueList = new List<double>();
+    Responses responses { get; set; }
+    bool TextValid { get; set; }
+
+    List<PredefinedModule> PredefinedAlgorithms { get; set; }
+    List<PredefinedModule> PredefinedCombinations { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Config = new Config();
+        UserInstance = new Form();
+        await FetchData();
+        PredefinedAlgorithms = Utils.ConvertConfig(Config.Algorithms);
+        PredefinedCombinations = Utils.ConvertConfig(Config.Combinations);
+        await base.OnInitializedAsync();
+    }
+
+    public async Task FetchData()
+    {
+        HttpClient client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/api/config/");
+        var response = await client.SendAsync(request);
+        Config = JsonConvert.DeserializeObject<Config>(await response.Content.ReadAsStringAsync(), new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+        StateHasChanged();
+    }
+
+    public void OnInput(ChangeEventArgs eventArgs)
+    {
+    }
+
+    public void OnClick()
+    {
+        UserInstance.Algorithms.Add(new ModuleForm(PredefinedAlgorithms));
+    }
+
+    public void OnClickCombs()
+    {
+        UserInstance.Combinations.Add(new ModuleForm(PredefinedCombinations));
+    }
+
+    public async void Send()
+    {
+        List<double> result;
+        try
+        {
+            result = values.Split(',').Select(x => double.Parse(x)).ToList();
+        }
+        catch
+        {
+            TextValid = false;
+            return;
+        }
+
+        UserInstance.Values = result;
+
+        HttpClient client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/api/api/");
+        request.Content = new StringContent(JsonConvert.SerializeObject(UserInstance.ToRequestData()), System.Text.Encoding.UTF8, "application/json");
+        var response = await client.SendAsync(request);
+        var algsandcombs = JsonConvert.DeserializeObject<Responses>(await response.Content.ReadAsStringAsync());
+        responses = algsandcombs;
+        valueList = result;
+        str = await response.Content.ReadAsStringAsync();
+        req = await request.Content.ReadAsStringAsync();
+        Console.WriteLine(str);
+        Console.WriteLine(req);
+        StateHasChanged();
+    }
+
+    public struct Responses
+    {
+        public List<ModuleResponse> AlgResponses { get; set; }
+        public List<ModuleResponse> CombResponses { get; set; }
+    }
+    
+}

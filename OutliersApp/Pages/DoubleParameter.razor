@@ -4,11 +4,11 @@
 
 <div class="input-group" style="margin-bottom: 8px;">
     <div class="input-group-prepend">
-        <span class="input-group-text">@Item.Key</span>
+        <span class="input-group-text">@SettingsForm.Name</span>
     </div>
-    <input type="text" placeholder="default:@Item.Value.Default" class="form-control @(Utils.IsValidDouble(Mod.Params[Item.Key], Item.Value) ? "is-valid" : "is-invalid")" @oninput=@(e => Utils.ChangeValue(e, Item, Mod)) required/>
+    <input type="text" placeholder="значение_по_умолчанию=@SettingsForm.Default" class="form-control @(SettingsForm.IsValid ? "" : "is-invalid")" @oninput=@(ChangeValue) required/>
     <div class="invalid-feedback">
-        Число должно быть в промежутке от @Item.Value.Min до @Item.Value.Max.
+        Введите число в промежутке от @SettingsForm.Min до @SettingsForm.Max.
     </div>
 </div>
 
@@ -16,9 +16,30 @@
 @code{
 
     [Parameter]
-    public KeyValuePair<string, Parameters> Item { get; set; }
+    public DoubleSettingForm SettingsForm { get; set; }
 
-    [Parameter]
-    public NameModule Mod { get; set; }
+    public void ChangeValue(ChangeEventArgs args)
+    {
+        string inputValue = args.Value.ToString();
+
+        if (inputValue == string.Empty)
+        {
+            SettingsForm.Value = SettingsForm.Default;
+        }
+        else
+        {
+            try
+            {
+                SettingsForm.Value = double.Parse(inputValue);
+            }
+            catch
+            {
+                SettingsForm.IsValid = false;
+                return;
+            }
+        }
+
+        SettingsForm.IsValid = true;
+    }
 
 }

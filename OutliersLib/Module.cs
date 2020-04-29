@@ -12,14 +12,26 @@ namespace OutliersLib
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Module
     {
+        public string Name { get; set; }
         public bool Internal { get; set; }
         public string Uri { get; set; }
+        public double Weight { get; set; }
         public Dictionary<string, object> Params { get; set; }
         public Module()
         {
             Internal = true;
             Uri = String.Empty;
             Params = new Dictionary<string, object>();
+            Weight = 1;
+        }
+
+        public Module(string name, bool intern, string uri, double weight, Dictionary<string, object> pars)
+        {
+            Name = name;
+            Internal = intern;
+            Uri = uri;
+            Params = pars;
+            Weight = weight;
         }
         // public async Task<HttpRequestMessage> MakeRequest(object data)
         // {

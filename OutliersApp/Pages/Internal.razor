@@ -1,69 +1,55 @@
 ﻿@using Data
 @using OutliersLib
 
-<div class="collapse show">
-    <div class="input-group" style="margin-top: 8px;">
-        <div class="input-group-prepend"><span class="input-group-text">Addon</span></div><select class="custom-select" @onchange="@OnSelect">
-            <option label="Выберите алгоритм..." disabled selected="@(Mod.Selected.Key == "choose")">choose</option>
-            @foreach (var module in Config)
-            {
-                <option label="@module.Value.CoolName" selected="@(Mod.Selected.Key == module.Key)">@module.Key</option>
-            }
-        </select>
+<div class="input-group" style="margin-top: 8px;">
+
+    @*Надпись слева*@
+    <div class="input-group-prepend">
+        <span class="input-group-text">Имя модуля</span>
     </div>
+
+    @*Поле выбора справа*@
+    <select class="custom-select" @onchange="@OnSelect">
+        <option label="Выберите алгоритм..." disabled selected="@(InternalForm.Selected.Name == string.Empty)">choose</option>
+        @foreach (var module in InternalForm.InternalModulesList)
+        {
+            <option label="@module.CoolName" selected="@(InternalForm.Selected.Name == module.Name)">@module.Name</option>
+        }
+    </select>
+
 </div>
 
-@foreach (var item in Mod.Selected.Value.Options)
+
+@foreach (var setting in InternalForm.Selected.Settings)
 {
-    @if (item.Value.Type == "double")
+    @if (setting is DoubleSettingForm)
     {
-        <DoubleParameter Mod="@Mod.Internal" Item="@item"></DoubleParameter>
+        <DoubleParameter SettingsForm="@((DoubleSettingForm)setting)"></DoubleParameter>
     }
 
-    @if (item.Value.Type == "string")
+    @if (setting is SelectSettingForm)
     {
-
+        <SelectParameter SettingsForm="@((SelectSettingForm)setting)"></SelectParameter>
     }
 
-    @if (item.Value.Type == "bool")
+    @if (setting is BoolSettingForm)
     {
-        <BoolParameter Mod="@Mod.Internal" Item="@item"></BoolParameter>
+        <BoolParameter SettingsForm="@((BoolSettingForm)setting)"></BoolParameter>
     }
 }
 
 @code{
+
     [Parameter]
-    public InternalStruct Mod { get; set; }
-    
-    [Parameter]
-    public Dictionary<string, ModuleSettings> Config { get; set; }
+    public InternalForm InternalForm { get; set; }
 
     public void OnSelect(ChangeEventArgs args)
     {
-        if (args.Value.ToString() == "choose")
+        string selectedName = args.Value.ToString();
+        foreach (var internalModule in InternalForm.InternalModulesList)
         {
-            Mod.Selected = new KeyValuePair<string, ModuleSettings>(args.Value.ToString(), new ModuleSettings());
-            return;
-        }
-
-        Mod.Selected = new KeyValuePair<string, ModuleSettings>(args.Value.ToString(),Config[args.Value.ToString()]);
-        Mod.Internal.Params.Clear();
-        Mod.Internal.Name = args.Value.ToString();
-        foreach (var o in Mod.Selected.Value.Options)
-        {
-            if(o.Value.Type == "double")
-            {
-                Mod.Internal.Params.Add(o.Key, o.Value.Default);
-                continue;
-            }
-
-            if(o.Value.Type == "bool")
-            {
-                Mod.Internal.Params.Add(o.Key, o.Value.Default);
-                continue;
-            }
-
-            Mod.Internal.Params.Add(o.Key, null);
+            if (internalModule.Name == selectedName)
+                InternalForm.Selected = internalModule;
         }
     }
 

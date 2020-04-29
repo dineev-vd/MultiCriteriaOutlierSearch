@@ -1,20 +1,21 @@
-﻿@using Data
+﻿@using OutliersLib
+@using OutliersApp.Data
 
 @*Имя*@
 <div class="input-group" style="margin-bottom: 8px; margin-top:8px;">
     <div class="input-group-prepend">
         <span class="input-group-text">Имя</span>
-    </div><input type="text" class="form-control" @bind="@Mod.Name"/>
+    </div><input type="text" class="form-control" @bind="@ExternalForm.Name"/>
 </div>
 <div class="input-group" style="margin-bottom: 8px; margin-top:8px;">
     <div class="input-group-prepend">
         <span class="input-group-text">URL</span>
-    </div><input type="text" class="form-control" @bind="@Mod.Uri"/>
+    </div><input type="text" class="form-control" @bind="@ExternalForm.Uri"/>
 </div>
 
 @code{
 
     [Parameter]
-    public NameModule Mod { get; set; }
+    public ExternalForm ExternalForm { get; set; }
 
 }

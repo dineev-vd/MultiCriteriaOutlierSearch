@@ -4,23 +4,24 @@ using System.Text;
 
 namespace OutliersLib
 {
-    public class Parameters
+    public class Parameter
     {
         public string Type { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
         public object Default { get; set; }
+        public List<string> Data { get; set; }
     }
     public class ModuleSettings { 
         public string Uri { get; set; }
         public string CoolName { get; set; }
-        public Dictionary<string, Parameters> Options { get; set; }
+        public Dictionary<string, Parameter> Parameters { get; set; }
 
         public ModuleSettings()
         {
             Uri = "";
             CoolName = "";
-            Options = new Dictionary<string, Parameters>();
+            Parameters = new Dictionary<string, Parameter>();
         }
     }
     public class Config

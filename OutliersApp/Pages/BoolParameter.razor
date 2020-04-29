@@ -1,8 +1,10 @@
 ﻿@using OutliersLib
-@using Data
+@using OutliersApp.Data
+
+
 <div class="custom-control custom-checkbox">
-    <input type="checkbox" class="custom-control-input" id="customControlValidation1" @onchange="@((ChangeEventArgs eventArgs) => Mod.Params[Item.Key] = bool.Parse(eventArgs.Value.ToString()))" checked="@Item.Value.Default">
-    <label class="custom-control-label" for="customControlValidation1">@Item.Key</label>
+    <input type="checkbox" class="custom-control-input" id="customControlValidation1" @onchange="OnChange" checked="@SettingsForm.Value">
+    <label class="custom-control-label" for="customControlValidation1">@SettingsForm.Name</label>
 </div>
 
 @*TODO Сделать зависимость id От ID*@
@@ -10,9 +12,21 @@
 @code
 {
     [Parameter]
-    public KeyValuePair<string, Parameters> Item { get; set; }
+    public BoolSettingForm SettingsForm { get; set; }
 
-    [Parameter]
-    public NameModule Mod { get; set; }
+    public void OnChange(ChangeEventArgs args)
+    {
+        string inputValue = args.Value.ToString();
+        try
+        {
+            SettingsForm.Value = bool.Parse(inputValue);
+        }
+        catch
+        {
+            SettingsForm.IsValid = false;
+            return;
+        }
 
+        SettingsForm.IsValid = true;
+    }
 }

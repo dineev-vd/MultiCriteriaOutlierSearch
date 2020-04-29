@@ -25,7 +25,7 @@ namespace OutliersLib
                     continue;
                 }
 
-                m.Value.Options = JsonConvert.DeserializeObject<Dictionary<string, Parameters>>(await response.Content.ReadAsStringAsync());
+                m.Value.Parameters = JsonConvert.DeserializeObject<Dictionary<string, Parameter>>(await response.Content.ReadAsStringAsync());
             }
 
             return dict;

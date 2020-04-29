@@ -10,7 +10,7 @@ namespace OutliersLib
 {
     public static class Interaction
     {
-        public static async Task<HttpRequestMessage> MakeRequest(string name, Module module, object data)
+        public static async Task<HttpRequestMessage> MakeRequest(Module module, object data)
         {
             string uri = string.Empty;
             if (!module.Internal)
@@ -20,20 +20,20 @@ namespace OutliersLib
             else
             {
                 var config = await Configuration.Read();
-                if (config.Algorithms.ContainsKey(name))
+                if (config.Algorithms.ContainsKey(module.Name))
                 {
-                    uri = config.Algorithms[name].Uri;
+                    uri = config.Algorithms[module.Name].Uri;
                 }
 
-                if (config.Combinations.ContainsKey(name))
+                if (config.Combinations.ContainsKey(module.Name))
                 {
-                    uri = config.Combinations[name].Uri;
+                    uri = config.Combinations[module.Name].Uri;
                 }
             }
 
             if (uri == string.Empty)
             {
-                throw new ArgumentException($"cant resolve internal name : {name}");
+                throw new ArgumentException($"cant resolve internal name : {module.Name}");
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
@@ -42,24 +42,24 @@ namespace OutliersLib
             return request;
         }
 
-        async static public Task<ModuleResponse> GetResponse(string name, Module module, object data)
+        async static public Task<ModuleResponse> GetResponse(Module module, object data)
         {
             HttpResponseMessage response;
             try
             {
-                response = await Configuration.httpClient.SendAsync(await MakeRequest(name, module, data));
+                response = await Configuration.httpClient.SendAsync(await MakeRequest(module, data));
             }
             catch (Exception e)
             {
-                return new ModuleResponse(e.Message, null);
+                return new ModuleResponse(module.Name,e.Message, null);
             }
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                return new ModuleResponse(response.StatusCode.ToString(), null);
+                return new ModuleResponse(module.Name,response.StatusCode.ToString(), null);
             }
 
-            var moduleResponse = new ModuleResponse(response.StatusCode.ToString(),
+            var moduleResponse = new ModuleResponse(module.Name, response.StatusCode.ToString(),
                 JsonConvert.DeserializeObject<List<double>>(await response.Content.ReadAsStringAsync()));
             return moduleResponse;
         }
