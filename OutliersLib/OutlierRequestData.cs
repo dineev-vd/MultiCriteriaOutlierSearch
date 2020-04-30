@@ -27,7 +27,13 @@ namespace OutliersLib
             var responseList = new List<ModuleResponse>();
             foreach (var alg in Algorithms)
             {
-                responseList.Add(await Interaction.GetResponse(alg, Values));
+                var response = await Interaction.GetResponse(alg, Values);
+                if (alg.Weight != 1)
+                {
+                    response.Data = new List<double>(response.Data.Select(x => x * alg.Weight));
+                }
+
+                responseList.Add(response);
             }
 
             return responseList;
@@ -43,6 +49,7 @@ namespace OutliersLib
                 {
                     continue;
                 }
+
                 weightsList.Add(resp.Data);
             }
 

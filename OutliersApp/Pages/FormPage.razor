@@ -17,7 +17,7 @@
                                     </h5>
                                 </div>
                                 <div class="col">
-                                    <input type="text" placeholder="default=1" class="form-control" required/>
+                                    <input type="text" placeholder="default=1" @oninput="@(args => { try{ item.Weight = double.Parse(args.Value.ToString());} catch {}})" class="form-control" required/>
                                 </div>
                                 <div class="col-reverse">
                                     <button class="btn btn-danger mr-2" type="button" @onclick="@((e) => { UserInstance.Algorithms.Remove(item); })">Удалить</button>
@@ -52,9 +52,6 @@
                                     <h5 class="mb-0">
                                         <a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-2 .item-@local" href="#accordion-2 .item-@local">Accordion Item</a>
                                     </h5>
-                                </div>
-                                <div class="col">
-                                    <input type="text" placeholder="default=1" class="form-control" required/>
                                 </div>
                                 <div class="col-reverse">
                                     <button class="btn btn-danger mr-2" type="button" @onclick="@((e) => UserInstance.Combinations.Remove(item))">Удалить</button>
@@ -217,5 +214,5 @@
         public List<ModuleResponse> AlgResponses { get; set; }
         public List<ModuleResponse> CombResponses { get; set; }
     }
-    
+
 }

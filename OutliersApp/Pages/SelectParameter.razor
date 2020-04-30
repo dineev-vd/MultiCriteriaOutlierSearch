@@ -1,0 +1,38 @@
+﻿@using OutliersLib
+@using OutliersApp.Data
+
+<div class="input-group" style="margin-top: 8px;">
+    <div class="input-group-prepend">
+        <span class="input-group-text">@SettingsForm.Name</span>
+    </div>
+    <select class="custom-select" @onchange="@OnSelect">
+        @foreach (var option in SettingsForm.Options)
+        {
+            <option label="@option" selected="@(option == SettingsForm.Value)">@option</option>
+        }
+    </select>
+</div>
+
+
+@code{
+
+    [Parameter]
+    public SelectSettingForm SettingsForm { get; set; }
+
+    public void OnSelect(ChangeEventArgs args)
+    {
+        string inputValue = args.Value.ToString();
+        try
+        {
+            SettingsForm.Value = inputValue;
+        }
+        catch
+        {
+            SettingsForm.IsValid = false;
+            return;
+        }
+
+        SettingsForm.IsValid = true;
+    }
+
+}
