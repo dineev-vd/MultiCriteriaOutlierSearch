@@ -19,7 +19,7 @@ namespace OutliersLib
             }
             else
             {
-                var config = await Configuration.Read();
+                var config = await Utils.Read();
                 if (config.Algorithms.ContainsKey(module.Name))
                 {
                     uri = config.Algorithms[module.Name].Uri;
@@ -47,7 +47,7 @@ namespace OutliersLib
             HttpResponseMessage response;
             try
             {
-                response = await Configuration.httpClient.SendAsync(await MakeRequest(module, data));
+                response = await Utils.httpClient.SendAsync(await MakeRequest(module, data));
             }
             catch (Exception e)
             {

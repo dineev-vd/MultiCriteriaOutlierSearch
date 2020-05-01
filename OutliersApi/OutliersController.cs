@@ -40,7 +40,7 @@ namespace outliers_api
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await Configuration.Read());
+            return Ok(await Utils.Read());
         }
     }
 }

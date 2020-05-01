@@ -1,0 +1,57 @@
+﻿<form class="needs-validation">
+    @*Алгоритмы*@
+    <div class="container mb-4 border rounded p-3">
+        <h4>Алгоритмы</h4>
+        <h6 class="text-muted mb-2">Список алгоритмов для выполнения</h6>
+        <div role="tablist" id="accordion-1">
+            @{ var id = 0; }
+            @foreach (var item in UserInstance.Algorithms)
+            {
+                string local = id + "-1";
+                <ModuleFormPage Id="@local" ModuleFormModel="@item" OnDelete=@(mod => UserInstance.Algorithms.Remove(mod)) HasWeight="@true"></ModuleFormPage>
+                id++;
+            }
+        </div>
+        <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClick">Добавить алгоритм</button>
+    </div>
+    
+    @*Комбинации*@
+    <div class="container mb-4 border rounded p-3">
+        <h4>Комбинации</h4>
+        <h6 class="text-muted mb-2">Список комбинаций для выполнения</h6>
+        <div role="tablist" id="accordion-2">
+            @{ var idd = 0; }
+            @foreach (var item in UserInstance.Combinations)
+            {
+                string local = idd + "-2";
+                <ModuleFormPage @key=item Id="@local" ModuleFormModel="@item" OnDelete=@(mod => UserInstance.Combinations.Remove(mod)) HasWeight="@false"></ModuleFormPage>
+                idd++;
+            }
+        </div>
+        <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClickCombs">Добавить комбинацию</button>
+    </div>
+
+    <div class="container mb-4 border rounded p-3">
+        <ValuesInput UserInstance="@UserInstance"></ValuesInput>
+        <button class="btn btn-success btn-block btn-sm" type="button" @onclick="OnSendClick">Отправить</button>
+    </div>
+</form>
+@if (!IsValid)
+{
+    <div class="alert-warning">Проверьте поля!</div>
+}
+
+<Table valueList="@UserInstance.Values" responses="@responses"></Table>
+
+@*TODO Проверка на корректность формы
+*@
+
+@using Newtonsoft.Json
+@using OutliersLib
+@inject IJSRuntime IJSRuntime
+@namespace OutliersApp.Components
+
+@code {
+
+
+}

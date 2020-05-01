@@ -1,0 +1,63 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        @for(int i = 0; i < valueList.GetLength(1); i++)
+        {
+            <th scope="col">value</th>
+        }
+        @foreach (var resp in responses?.AlgResponses)
+        {
+            if (resp.Status == "OK")
+            {
+                <th scope="col">@resp.Name</th>
+            }
+        }
+        @foreach (var resp in responses?.CombResponses)
+        {
+            if (resp.Status == "OK")
+            {
+                <th scope="col">@resp.Name</th>
+            }
+        }
+    </tr>
+    </thead>
+    <tbody>
+    @for (int i = 0; i < valueList.GetLength(0); i++)
+    {
+        <tr>
+            <th scope="row">@(i + 1)</th>
+            @for (int j = 0; j < valueList.GetLength(1); j++)
+            {
+                <td>@valueList[i,j]</td>
+            }
+            @foreach (var resp in responses?.AlgResponses)
+            {
+                @if (resp.Status == "OK")
+                {
+                    <td>@resp.Data[i]</td>
+                }
+            }
+            @foreach (var resp in responses?.CombResponses)
+            {
+                @if (resp.Status == "OK")
+                {
+                    <td>@resp.Data[i]</td>
+                }
+            }
+        </tr>
+    }
+    </tbody>
+</table>
+
+@namespace OutliersApp.Components
+
+@code
+{
+    [Parameter]
+    public double[,] valueList { get; set; }
+
+    [Parameter]
+    public FormPage.Responses responses { get; set; }
+    
+}

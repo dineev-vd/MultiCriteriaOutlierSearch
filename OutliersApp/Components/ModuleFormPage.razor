@@ -1,0 +1,89 @@
+﻿@using System.Globalization
+@namespace OutliersApp.Components
+
+<div class="card mb-2" id="card-@Id">
+    <form class="needs-validation">
+        <div role="tab" class="card-header">
+            <div class="row">
+                <div class="col">
+                    <h5 class="mb-0">
+                        <button type="button" class="btn btn-link" @onclick=@Toggle>Линк</button>
+                    </h5>
+                </div>
+                @if (HasWeight)
+                {
+                    <div class="col">
+                        <input type="text" placeholder="default=1" @oninput="@OnWeightChange" class="form-control @(ModuleFormModel.WeightIsValid ? "" : "is-invalid")" required/>
+                    </div>
+                }
+                <div class="col-reverse">
+                    <button class="btn btn-danger mr-2" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(ModuleFormModel))>Удалить</button>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" data-parent="#accordion-1" class="collapse @(ModuleFormModel.IsShown ? "show" : "") item-@Id">
+
+
+            <div class="card-body">
+
+
+
+                @*Переключатель внутренней и внешней формы*@
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="@Id 1" name="customRadioInline @Id" class="custom-control-input" @onchange="@EnableName" checked="@ModuleFormModel.IsInternal">
+                    <label class="custom-control-label" for="@Id 1">Внутренний</label>
+                </div>
+
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="@Id 2" name="customRadioInline @Id" class="custom-control-input" @onchange="@DisableName" checked="@(!ModuleFormModel.IsInternal)">
+                    <label class="custom-control-label" for="@Id 2">Внешний</label>
+                </div>
+
+
+                @*Переключатель для внутренний/внешний*@
+                @if (ModuleFormModel.IsInternal)
+                {
+                    <Internal InternalFormModel=@ModuleFormModel.Internal></Internal>
+                }
+                else
+                {
+                    <External ExternalFormModel=@ModuleFormModel.External></External>
+                }
+            </div>
+        </div>
+    </form>
+</div>
+
+@inject IJSRuntime IJSRuntime;
+
+@code{
+
+    public void Toggle(MouseEventArgs e)
+    {
+        ModuleFormModel.IsShown = !ModuleFormModel.IsShown;
+    }
+
+    public void OnWeightChange(ChangeEventArgs args)
+    {
+        Console.WriteLine(args.Value);
+        if (args.Value.ToString() == string.Empty)
+        {
+            ModuleFormModel.Weight = 1;
+        }
+        else
+        {
+            try
+            {
+                ModuleFormModel.Weight = double.Parse(args.Value.ToString(), CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                ModuleFormModel.WeightIsValid = false;
+                return;
+            }
+        }
+
+        ModuleFormModel.WeightIsValid = true;
+    }
+
+}

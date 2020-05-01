@@ -1,0 +1,58 @@
+﻿@using OutliersLib
+@using OutliersApp.Models.Parameters
+@using OutliersApp.Models
+@namespace OutliersApp.Components
+
+<div class="input-group my-2">
+
+    @*Надпись слева*@
+    <div class="input-group-prepend">
+        <span class="input-group-text">Имя модуля</span>
+    </div>
+
+    @*Поле выбора справа*@
+    <select class="custom-select" @onchange="@OnSelect">
+        <option label="Выберите алгоритм..." disabled selected="@(InternalFormModel.Selected.Name == string.Empty)">choose</option>
+        @foreach (var module in InternalFormModel.InternalModulesList)
+        {
+            <option label="@module.CoolName" selected="@(InternalFormModel.Selected.Name == module.Name)">@module.Name</option>
+        }
+    </select>
+
+</div>
+
+
+@foreach (var setting in InternalFormModel.Selected.Settings)
+{
+    @if (setting is DoubleParameterModel)
+    {
+        <DoubleParameter SettingsForm="@((DoubleParameterModel)setting)"></DoubleParameter>
+    }
+
+    @if (setting is SelectParameterModel)
+    {
+        <SelectParameter SettingsForm="@((SelectParameterModel)setting)"></SelectParameter>
+    }
+
+    @if (setting is BoolParameterModel)
+    {
+        <BoolParameter SettingsForm="@((BoolParameterModel)setting)"></BoolParameter>
+    }
+}
+
+@code{
+
+    [Parameter]
+    public InternalFormModel InternalFormModel { get; set; }
+
+    public void OnSelect(ChangeEventArgs args)
+    {
+        string selectedName = args.Value.ToString();
+        foreach (var internalModule in InternalFormModel.InternalModulesList)
+        {
+            if (internalModule.Name == selectedName)
+                InternalFormModel.Selected = internalModule;
+        }
+    }
+
+}

@@ -1,6 +1,6 @@
 ﻿@using OutliersLib
-@using OutliersApp.Data
-
+@using OutliersApp.Models.Parameters
+@namespace OutliersApp.Components
 
 <div class="custom-control custom-checkbox">
     <input type="checkbox" class="custom-control-input" id="customControlValidation1" @onchange="OnChange" checked="@SettingsForm.Value">
@@ -12,7 +12,7 @@
 @code
 {
     [Parameter]
-    public BoolSettingForm SettingsForm { get; set; }
+    public BoolParameterModel SettingsForm { get; set; }
 
     public void OnChange(ChangeEventArgs args)
     {

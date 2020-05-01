@@ -1,4 +1,6 @@
 from flask import request, jsonify, Flask
+import json
+import numpy as np
 
 q90 = [0.941, 0.765, 0.642, 0.56, 0.507, 0.468, 0.437,
        0.412, 0.392, 0.376, 0.361, 0.349, 0.338, 0.329,
@@ -82,8 +84,23 @@ app = Flask(__name__)
 @app.route('/algorithms/dixon/', methods=['POST'])
 def dixon():
     try:
-        data = request.json['Data']
-        outliers = dixon_test(data)
+        data = np.array(request.json["Data"])
+        if data.shape != (len(data), 1):
+            raise Exception
+
+        data = data.reshape(1, -1).flatten()
+        params = request.json['params']
+        
+        if params['qdict'] == 'q90':
+            qdict = Q90
+
+        if params['qdict'] == 'q95':
+            qdict = Q95
+
+        if params['qdict'] == 'q99':
+            qdict = Q99 
+
+        outliers = dixon_test(data, left=params['left'], right=params['right'], q_dict=qdict)
         indices = [0 for i in range(0,len(data))]
         for outlier in outliers:
             if outlier == None:
@@ -94,4 +111,8 @@ def dixon():
         return jsonify("error:dixon"), 400
     return jsonify(indices)
 
-"""ccc"""
+@app.route('/algorithms/dixon/config/',methods=['GET'])
+def config():
+    with open("config.json") as json_file:
+        data = json.load(json_file)
+    return jsonify(data)

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import numpy
+import numpy as np
 
 
 app = Flask(__name__)
@@ -7,10 +7,14 @@ app = Flask(__name__)
 @app.route('/<path:path>', methods=['POST'])
 def threesigma(path):
     try:
-        data = request.json['Data']
+        data = np.array(request.json["Data"])
+        if data.shape != (len(data), 1):
+            raise Exception
+
+        data = data.reshape(1, -1).flatten()
         print(data)
-        sigma = numpy.std(data)
-        mean = numpy.mean(data)
+        sigma = np.std(data)
+        mean = np.mean(data)
         print(mean, sigma)
         indices = []
         for i in range(len(data)):

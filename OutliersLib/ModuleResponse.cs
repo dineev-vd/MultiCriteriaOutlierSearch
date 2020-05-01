@@ -19,5 +19,12 @@ namespace OutliersLib
             Status = status;
             Data = data;
         }
+
+        public ModuleResponse()
+        {
+            Name = "";
+            Status = "";
+            Data = new List<double>();
+        }
     }
 }

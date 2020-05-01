@@ -1,0 +1,11 @@
+@using OutliersApp.Models
+<div class="input-group mb-4">
+    <textarea class="form-control" aria-label="With textarea" @bind="@UserInstance.ValuesString" placeholder="1"></textarea>
+</div>
+
+@code{
+
+    [Parameter]
+    public Form UserInstance { get; set; }
+
+}

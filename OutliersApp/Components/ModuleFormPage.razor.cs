@@ -1,31 +1,31 @@
-﻿using System.Collections.Generic;
-using OutliersApp.Data;
-using OutliersLib;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using OutliersApp.Models;
 
-
-
-namespace OutliersApp.Pages
+namespace OutliersApp.Components
 {
     public partial class ModuleFormPage
     {
+        [Parameter] public bool HasWeight { get; set; }
+        [Parameter] public EventCallback<ModuleFormModel> OnDelete { get; set; }
         [Parameter] public string Id { get; set; }
 
-        [Parameter] public ModuleForm ModuleForm { get; set; }
+        [Parameter] public ModuleFormModel ModuleFormModel { get; set; }
 
         //TODO:
         //Сделать анимации появления на переключении внутренний/внешний
         
         public void EnableName(ChangeEventArgs args)
         {
-            ModuleForm.IsInternal = true;
+            ModuleFormModel.IsInternal = true;
             //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "show");
         }
 
         public void DisableName(ChangeEventArgs args)
         {
-            ModuleForm.IsInternal = false;
+            ModuleFormModel.IsInternal = false;
             //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "hide");
         }
+
+        
     }
 }

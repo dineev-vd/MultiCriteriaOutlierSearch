@@ -1,9 +1,16 @@
 {
     "alpha":{
-        "required":true,
         "type":"double",
         "min":0.01,
         "max":1,
         "default":0.01
+    },
+    "method":{
+        "type":"select",
+        "data":[
+            "double_sided",
+            "left_sided",
+            "right_sided"
+        ]
     }
 }

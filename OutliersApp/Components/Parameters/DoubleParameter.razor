@@ -1,6 +1,6 @@
 ﻿@using OutliersLib
-@using Data
-
+@using OutliersApp.Models.Parameters
+@namespace OutliersApp.Components
 
 <div class="input-group" style="margin-bottom: 8px;">
     <div class="input-group-prepend">
@@ -16,7 +16,7 @@
 @code{
 
     [Parameter]
-    public DoubleSettingForm SettingsForm { get; set; }
+    public DoubleParameterModel SettingsForm { get; set; }
 
     public void ChangeValue(ChangeEventArgs args)
     {

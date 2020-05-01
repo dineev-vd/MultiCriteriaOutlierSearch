@@ -10,7 +10,7 @@ using System.Net.Http;
 
 namespace OutliersLib
 {
-    public static class Configuration
+    public static class Utils
     {
         public async static Task<Config> Read()
         {

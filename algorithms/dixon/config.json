@@ -1,0 +1,18 @@
+{
+    "left":{
+        "type":"bool",
+        "default":"true"
+    },
+    "right":{
+        "type":"bool",
+        "default":"true"
+    },
+    "qdict":{
+        "type":"select",
+        "data":[
+            "q90",
+            "q95",
+            "q99"
+        ]
+    }
+}

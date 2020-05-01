@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
+using OutliersApp.Models.Parameters;
 using OutliersLib;
 
-namespace OutliersApp.Data
+namespace OutliersApp.Models
 {
     public static class Utils
     {
@@ -17,6 +19,7 @@ namespace OutliersApp.Data
 
             return true;
         }
+
         public static bool IsValidDouble(object value, Parameter pars)
         {
             if (!(value is double))
@@ -44,7 +47,7 @@ namespace OutliersApp.Data
                 Mod.Weight = 1;
                 return;
             }
-            
+
             try
             {
                 Mod.Weight = double.Parse((string) args.Value, CultureInfo.InvariantCulture);
@@ -54,7 +57,7 @@ namespace OutliersApp.Data
                 Mod.Weight = -1;
             }
         }
-        
+
         public static void ChangeValue(ChangeEventArgs value, KeyValuePair<string, Parameter> o, Module Mod)
         {
             if ((string) value.Value == String.Empty)
@@ -65,7 +68,7 @@ namespace OutliersApp.Data
 
             try
             {
-                Mod.Params[o.Key] = double.Parse((string)value.Value, CultureInfo.InvariantCulture);
+                Mod.Params[o.Key] = double.Parse((string) value.Value, CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -73,26 +76,28 @@ namespace OutliersApp.Data
             }
         }
 
-        public static List<SettingsForm> ConvertConfigSettings(Dictionary<string, Parameter> configParameters)
+        public static List<ParameterModelBase> ConvertConfigSettings(Dictionary<string, Parameter> configParameters)
         {
-            var result = new List<SettingsForm>();
+            var result = new List<ParameterModelBase>();
             foreach (var parameter in configParameters)
             {
                 if (parameter.Value.Type == "double")
                 {
-                    result.Add(new DoubleSettingForm(parameter.Key, parameter.Value.Min, parameter.Value.Max, (double)parameter.Value.Default));
+                    result.Add(new DoubleParameterModel(parameter.Key, parameter.Value.Min, parameter.Value.Max,
+                        (double) parameter.Value.Default));
                     continue;
                 }
 
                 if (parameter.Value.Type == "select")
                 {
-                    result.Add(new SelectSettingForm(parameter.Key, parameter.Value.Data, (string)parameter.Value.Default));
+                    result.Add(new SelectParameterModel(parameter.Key, parameter.Value.Data,
+                        (string) parameter.Value.Default));
                     continue;
                 }
 
                 if (parameter.Value.Type == "bool")
                 {
-                    result.Add(new BoolSettingForm(parameter.Key, (bool)parameter.Value.Default));
+                    result.Add(new BoolParameterModel(parameter.Key, (bool) parameter.Value.Default));
                     continue;
                 }
 
@@ -102,13 +107,32 @@ namespace OutliersApp.Data
 
             return result;
         }
-        
+
         public static List<PredefinedModule> ConvertConfig(Dictionary<string, ModuleSettings> configModulesDict)
         {
             var result = new List<PredefinedModule>();
             foreach (var configModule in configModulesDict)
             {
-                result.Add(new PredefinedModule(configModule.Key, configModule.Value.CoolName, ConvertConfigSettings(configModule.Value.Parameters)));
+                result.Add(new PredefinedModule(configModule.Key, configModule.Value.CoolName,
+                    ConvertConfigSettings(configModule.Value.Parameters)));
+            }
+
+            return result;
+        }
+
+        public static double[,] ParseInput(string input)
+        {
+            string[] rows = input.Split('\n');
+            double[,] result = new double[rows.Length, rows.First().Split(',').Length];
+
+
+            for (int i = 0; i < result.GetLength(0); i++)
+            {
+                string[] doubleStrings = rows[i].Split(',');
+                for (int j = 0; j < result.GetLength(1); j++)
+                {
+                    result[i, j] = double.Parse(doubleStrings[j], new NumberFormatInfo {NumberDecimalSeparator = "."});
+                }
             }
 
             return result;

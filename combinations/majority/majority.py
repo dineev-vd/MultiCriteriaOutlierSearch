@@ -12,4 +12,4 @@ def majority_get(path):
         result = majority_vote(np.transpose(array))
         return jsonify(result.tolist())
     except:
-        return jsonify("error")
+        return jsonify("error"), 400

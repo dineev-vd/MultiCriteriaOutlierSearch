@@ -13,13 +13,13 @@ namespace OutliersLib
     {
         public List<Module> Algorithms { get; set; }
         public List<Module> Combinations { get; set; }
-        public List<double> Values { get; set; }
+        public double[,] Values { get; set; }
 
         public OutlierRequestData()
         {
             Algorithms = new List<Module>();
             Combinations = new List<Module>();
-            Values = new List<double>();
+            Values = new double[0,0];
         }
 
         async public Task<List<ModuleResponse>> FetchAlgorithms()
