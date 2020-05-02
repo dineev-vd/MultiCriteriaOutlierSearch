@@ -42,9 +42,9 @@ def dixon_test(data, left=True, right=True, q_dict=Q95):
        for [5,1,5] -> [1, None]
 
     """
-    assert(left or right), 'At least one of the variables, `left` or `right`, must be True.'
-    assert(len(data) >= 3), 'At least 3 data points are required'
-    assert(len(data) <= max(q_dict.keys())), 'Sample size too large'
+    assert(left or right), 'Хотя бы один из тестов мин или макс должен присутствовать'
+    assert(len(data) >= 3), 'Нужно хотя бы 3 значения'
+    assert(len(data) <= max(q_dict.keys())), 'Размер выборки слишком большой'
 
     sdata = sorted(data)
     Q_mindiff, Q_maxdiff = (0,0), (0,0)
@@ -86,10 +86,10 @@ def dixon():
     try:
         data = np.array(request.json["Data"])
         if data.shape != (len(data), 1):
-            raise Exception
+            raise Exception("Размерность данных больше 1")
 
         data = data.reshape(1, -1).flatten()
-        params = request.json['params']
+        params = request.json['Params']
         
         if params['qdict'] == 'q90':
             qdict = Q90
@@ -107,12 +107,15 @@ def dixon():
                 continue
             for i in [j for j, x in enumerate(data) if x == outlier]:
                 indices[i] = 1
-    except:
-        return jsonify("error:dixon"), 400
-    return jsonify(indices)
+    except Exception as e:
+        return jsonify({"message":str(e)}), 400
+    return jsonify({"message":"OK","data":indices})
 
 @app.route('/algorithms/dixon/config/',methods=['GET'])
 def config():
     with open("config.json") as json_file:
         data = json.load(json_file)
     return jsonify(data)
+
+if __name__ == "__main__":
+    app.run(debug=True,port=7000)

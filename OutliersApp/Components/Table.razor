@@ -1,54 +1,56 @@
-<table class="table">
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        @for(int i = 0; i < valueList.GetLength(1); i++)
-        {
-            <th scope="col">value</th>
-        }
-        @foreach (var resp in responses?.AlgResponses)
-        {
-            if (resp.Status == "OK")
-            {
-                <th scope="col">@resp.Name</th>
-            }
-        }
-        @foreach (var resp in responses?.CombResponses)
-        {
-            if (resp.Status == "OK")
-            {
-                <th scope="col">@resp.Name</th>
-            }
-        }
-    </tr>
-    </thead>
-    <tbody>
-    @for (int i = 0; i < valueList.GetLength(0); i++)
-    {
+<div class="table-responsive">
+    <table class="table">
+        <thead>
         <tr>
-            <th scope="row">@(i + 1)</th>
-            @for (int j = 0; j < valueList.GetLength(1); j++)
+            <th scope="col">#</th>
+            @for (int i = 0; i < valueList.GetLength(1); i++)
             {
-                <td>@valueList[i,j]</td>
+                <th scope="col">value</th>
             }
             @foreach (var resp in responses?.AlgResponses)
             {
-                @if (resp.Status == "OK")
+                if (resp.Status == 200)
                 {
-                    <td>@resp.Data[i]</td>
+                    <th scope="col">@resp.Name</th>
                 }
             }
-            @foreach (var resp in responses?.CombResponses)
+            @foreach (var resp in responses.CombResponses)
             {
-                @if (resp.Status == "OK")
+                if (resp.Status == 200)
                 {
-                    <td>@resp.Data[i]</td>
+                    <th scope="col">@resp.Name</th>
                 }
             }
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < valueList.GetLength(0); i++)
+        {
+            <tr>
+                <th scope="row">@(i + 1)</th>
+                @for (int j = 0; j < valueList.GetLength(1); j++)
+                {
+                    <td>@valueList[i, j]</td>
+                }
+                @foreach (var resp in responses.AlgResponses)
+                {
+                    @if (resp.Status == 200)
+                    {
+                        <td>@resp.Data[i]</td>
+                    }
+                }
+                @foreach (var resp in responses.CombResponses)
+                {
+                    @if (resp.Status == 200)
+                    {
+                        <td>@resp.Data[i]</td>
+                    }
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
 
 @namespace OutliersApp.Components
 
@@ -59,5 +61,5 @@
 
     [Parameter]
     public FormPage.Responses responses { get; set; }
-    
+
 }

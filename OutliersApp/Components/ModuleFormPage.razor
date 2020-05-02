@@ -43,11 +43,11 @@
                 @*Переключатель для внутренний/внешний*@
                 @if (ModuleFormModel.IsInternal)
                 {
-                    <Internal InternalFormModel=@ModuleFormModel.Internal></Internal>
+                    <Internal Model=@ModuleFormModel.Internal></Internal>
                 }
                 else
                 {
-                    <External ExternalFormModel=@ModuleFormModel.External></External>
+                    <External Model=@ModuleFormModel.External></External>
                 }
             </div>
         </div>

@@ -1,6 +1,7 @@
 ﻿@using OutliersLib
 @using OutliersApp.Models.Parameters
 @using OutliersApp.Models
+@using OutliersApp.Components.Parameters
 @namespace OutliersApp.Components
 
 <div class="input-group my-2">
@@ -11,18 +12,18 @@
     </div>
 
     @*Поле выбора справа*@
-    <select class="custom-select" @onchange="@OnSelect">
-        <option label="Выберите алгоритм..." disabled selected="@(InternalFormModel.Selected.Name == string.Empty)">choose</option>
-        @foreach (var module in InternalFormModel.InternalModulesList)
+    <select class="custom-select @(Model.NotSelected ? "is-invalid" : "")" @onchange="@OnSelect">
+        <option label="Выберите алгоритм..." disabled selected="@(Model.Selected.Name == string.Empty)"></option>
+        @foreach (var module in Model.InternalModulesList)
         {
-            <option label="@module.CoolName" selected="@(InternalFormModel.Selected.Name == module.Name)">@module.Name</option>
+            <option label="@module.CoolName" selected="@(Model.Selected.Name == module.Name)">@module.Name</option>
         }
     </select>
 
 </div>
 
 
-@foreach (var setting in InternalFormModel.Selected.Settings)
+@foreach (var setting in Model.Selected.Settings)
 {
     @if (setting is DoubleParameterModel)
     {
@@ -38,20 +39,25 @@
     {
         <BoolParameter SettingsForm="@((BoolParameterModel)setting)"></BoolParameter>
     }
+    
+    @if (setting is StringParameterModel)
+    {
+        <StringParameter SettingsForm="@((StringParameterModel) setting)"></StringParameter>
+    }
 }
 
 @code{
 
     [Parameter]
-    public InternalFormModel InternalFormModel { get; set; }
+    public InternalFormModel Model { get; set; }
 
     public void OnSelect(ChangeEventArgs args)
     {
         string selectedName = args.Value.ToString();
-        foreach (var internalModule in InternalFormModel.InternalModulesList)
+        foreach (var internalModule in Model.InternalModulesList)
         {
             if (internalModule.Name == selectedName)
-                InternalFormModel.Selected = internalModule;
+                Model.Selected = internalModule;
         }
     }
 

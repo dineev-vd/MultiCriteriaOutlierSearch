@@ -1,13 +1,14 @@
 {
     "left":{
         "type":"bool",
-        "default":"true"
+        "default":true
     },
     "right":{
         "type":"bool",
-        "default":"true"
+        "default":true
     },
     "qdict":{
+        "default": "q99",
         "type":"select",
         "data":[
             "q90",

@@ -7,16 +7,25 @@
         <span class="input-group-text">@SettingsForm.Name</span>
     </div>
     <select class="custom-select" @onchange="@OnSelect">
+        <option label="Выберите значение..." disabled></option>
         @foreach (var option in SettingsForm.Options)
         {
             <option label="@option" selected="@(option == SettingsForm.Value)">@option</option>
         }
     </select>
+    @if (SettingsForm.IsCustom)
+        {
+            <div class="input-group-append">
+                 <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
+            </div>
+        }
 </div>
 
 
 @code{
-
+    [Parameter]
+    public EventCallback<ParameterModelBase> OnDelete { get; set; }
+    
     [Parameter]
     public SelectParameterModel SettingsForm { get; set; }
 

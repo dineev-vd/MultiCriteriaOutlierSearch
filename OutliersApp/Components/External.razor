@@ -1,22 +1,109 @@
 ﻿@using OutliersLib
 @using OutliersApp.Models
+@using OutliersApp.Models.Parameters
+@using System.Linq
+@using OutliersApp.Components.Parameters
 @namespace OutliersApp.Components
 
 @*Имя*@
 <div class="input-group" style="margin-bottom: 8px; margin-top:8px;">
     <div class="input-group-prepend">
         <span class="input-group-text">Имя</span>
-    </div><input type="text" class="form-control" @bind="@ExternalFormModel.Name"/>
+    </div><input type="text" class="form-control" @bind="@Model.Name"/>
 </div>
 <div class="input-group" style="margin-bottom: 8px; margin-top:8px;">
     <div class="input-group-prepend">
         <span class="input-group-text">URL</span>
-    </div><input type="text" class="form-control" @bind="@ExternalFormModel.Uri"/>
+    </div><input type="text" class="form-control" @bind="@Model.Uri"/>
 </div>
+
+<p>Параметры:</p>
+<div class="input-group">
+    <div class="input-group-prepend">
+        <select class="custom-select" id="inputGroupSelect04" @onchange="@OnChange">
+            <option selected disabled>Choose...</option>
+            <option label="Double">double</option>
+            <option label="Boolean">bool</option>
+            <option label="String">string</option>
+        </select>
+    </div>
+    <input type="text" placeholder="Введите имя..." @oninput=@(e => CustomName = e.Value.ToString())>
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" @onclick=@AddSetting>Button</button>
+    </div>
+</div>
+
+@foreach (var setting in Model.Settings)
+{
+    @if (setting is DoubleParameterModel)
+    {
+        <DoubleParameter SettingsForm="@((DoubleParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></DoubleParameter>
+    }
+
+    @if (setting is SelectParameterModel)
+    {
+        <SelectParameter SettingsForm="@((SelectParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></SelectParameter>
+    }
+
+    @if (setting is BoolParameterModel)
+    {
+        <BoolParameter SettingsForm="@((BoolParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></BoolParameter>
+    }
+    
+    @if (setting is StringParameterModel)
+    {
+        <StringParameter SettingsForm="@((StringParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></StringParameter>
+    }
+}
 
 @code{
 
     [Parameter]
-    public ExternalFormModel ExternalFormModel { get; set; }
+    public ExternalFormModel Model { get; set; }
+
+    public string Selected { get; set; }
+    
+    public string CustomName { get; set; }
+
+    public void OnChange(ChangeEventArgs args)
+    {
+        Selected = args.Value.ToString();
+    }
+
+    public void AddSetting()
+    {
+        if (CustomName == string.Empty || CustomName is null)
+        {
+            // Когда имя пустое
+            return;
+        }
+
+        var query = from item in Model.Settings
+            where item.Name == CustomName
+            select item;
+
+        if (query.Count() > 0)
+        {
+            // Когда повтор параметров
+            return;
+        }
+        
+        if (Selected == "double")
+        {
+            Model.Settings.Add(new DoubleParameterModel(CustomName));
+        }
+
+        if (Selected == "bool")
+        {
+            Model.Settings.Add(new BoolParameterModel(CustomName));
+        }
+
+        if (Selected == "string")
+        {
+            Model.Settings.Add(new StringParameterModel(CustomName));
+        }
+        
+        Model.Settings.Sort();
+    }
 
 }

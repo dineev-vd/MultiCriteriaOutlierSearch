@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Globalization;
+using OutliersLib;
 
 namespace outliers_api
 {
@@ -15,6 +16,15 @@ namespace outliers_api
     {
         public static void Main(string[] args)
         {
+            try
+            {
+                Utils.Read();
+            }
+            catch
+            {
+                // лог: не удалось прочитать конфиг
+            }
+
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ru-RU");
             CreateHostBuilder(args).Build().Run();
         }

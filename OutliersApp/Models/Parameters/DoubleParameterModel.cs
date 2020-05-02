@@ -4,7 +4,8 @@ namespace OutliersApp.Models.Parameters
 {
     public class DoubleParameterModel : ParameterModelBase
     {
-        public double _value;
+        double _value;
+        public override int Id { get; set; } = 1;
         public double Min { get; set; }
         public double Max { get; set; }
         public double Default { get; set; }
@@ -13,7 +14,7 @@ namespace OutliersApp.Models.Parameters
             get { return _value;}
             set
             {
-                if (!(Min <= value && value <= Max))
+                if (!(Min <= value && value <= Max) && !IsCustom)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -28,6 +29,12 @@ namespace OutliersApp.Models.Parameters
             Max = max;
             Default = def;
             Value = Default;
+            IsCustom = false;
+        }
+
+        public DoubleParameterModel(string name) : base(name)
+        {
+            IsCustom = true;
         }
     }
 }

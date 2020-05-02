@@ -8,7 +8,46 @@ namespace OutliersApp.Models
         public List<ModuleFormModel> Algorithms { get; set; }
         public List<ModuleFormModel> Combinations { get; set; }
         public double[,] Values { get; set; }
-        
+
+        public bool ValuesValid
+        {
+            get
+            {
+                try
+                {
+                    Values = Utils.ParseInput(ValuesString);
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        public bool IsValid
+        {
+            get
+            {
+                foreach (var mod in Algorithms)
+                {
+                    if (!mod.IsValid) return false;
+                }
+
+                foreach (var mod in Combinations)
+                {
+                    if (!mod.IsValid) return false;
+                }
+
+                if (!ValuesValid)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
         public string ValuesString { get; set; }
 
         public Form()
@@ -18,47 +57,6 @@ namespace OutliersApp.Models
             Values = new double[0,0];
         }
 
-        public bool Check()
-        {
-            foreach (var item in Algorithms)
-            {
-                if (item.IsInternal)
-                {
-                    foreach (var setting in item.Internal.Selected.Settings)
-                    {
-                        if (!setting.IsValid) return false;
-                    }
-                }
-                else
-                {
-                    foreach (var setting in item.External.Settings)
-                    {
-                        if (!setting.IsValid) return false;
-                    }
-                }
-            }
-            
-            foreach (var item in Combinations)
-            {
-                if (item.IsInternal)
-                {
-                    foreach (var setting in item.Internal.Selected.Settings)
-                    {
-                        if (!setting.IsValid) return false;
-                    }
-                }
-                else
-                {
-                    foreach (var setting in item.External.Settings)
-                    {
-                        if (!setting.IsValid) return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        
         public OutlierRequestData ToRequestData()
         {
             var requestData = new OutlierRequestData();

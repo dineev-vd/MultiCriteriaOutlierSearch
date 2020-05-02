@@ -1,9 +1,11 @@
 ﻿using System;
+using OutliersApp.Components.Parameters;
 
 namespace OutliersApp.Models.Parameters
 {
-    public abstract class ParameterModelBase : ICloneable
+    public abstract class ParameterModelBase : ICloneable, IComparable<ParameterModelBase>
     {
+        public abstract int Id { get; set; }
         public object Value
         {
             get
@@ -22,12 +24,18 @@ namespace OutliersApp.Models.Parameters
                 {
                     return ((BoolParameterModel) this).Value;
                 }
+                
+                if (this is StringParameterModel)
+                {
+                    return ((StringParameterModel) this).Value;
+                }
 
                 throw new NotImplementedException($"This type of parameter ({this.GetType().Name}) is not supported");
             }
         }
 
         public bool IsValid { get; set; }
+        public bool IsCustom { get; set; }
         public string Name { get; set; }
 
         public ParameterModelBase(string name)
@@ -57,6 +65,11 @@ namespace OutliersApp.Models.Parameters
             }
             
             throw new NotImplementedException($"Type {this.GetType()} cloning is not supported");
+        }
+
+        public int CompareTo(ParameterModelBase other)
+        {
+            return Id.CompareTo(other.Id);
         }
     }
 }

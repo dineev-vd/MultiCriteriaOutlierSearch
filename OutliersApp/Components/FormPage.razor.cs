@@ -21,6 +21,8 @@ namespace OutliersApp.Components
         Responses responses { get; set; }
         bool TextValid { get; set; }
         bool IsValid { get; set; }
+        bool IsLoading { get; set; }
+        bool ConfigNotLoaded { get; set; }
 
         List<PredefinedModule> PredefinedAlgorithms { get; set; }
         List<PredefinedModule> PredefinedCombinations { get; set; }
@@ -31,7 +33,17 @@ namespace OutliersApp.Components
             responses = new Responses();
             Config = new Config();
             UserInstance = new Form();
-            await FetchData();
+            IsLoading = false;
+            ConfigNotLoaded = false;
+            try
+            {
+                await FetchData();
+            }
+            catch
+            {
+                ConfigNotLoaded = true;
+            }
+
             PredefinedAlgorithms = Utils.ConvertConfig(Config.Algorithms);
             PredefinedCombinations = Utils.ConvertConfig(Config.Combinations);
             await base.OnInitializedAsync();
@@ -47,10 +59,6 @@ namespace OutliersApp.Components
             StateHasChanged();
         }
 
-        public void OnInput(ChangeEventArgs eventArgs)
-        {
-        }
-
         public void OnClick()
         {
             UserInstance.Algorithms.Add(new ModuleFormModel(PredefinedAlgorithms));
@@ -63,40 +71,55 @@ namespace OutliersApp.Components
 
         public async void OnSendClick()
         {
-            double[,] result;
+            //Обнуляем для текста
+            responses = new Responses();
+
+            if (!UserInstance.IsValid)
+            {
+                IsValid = false;
+                return;
+            }
+
+            IsValid = true;
+
+            IsLoading = true;
             try
             {
-                result = Utils.ParseInput(UserInstance.ValuesString);
+                await Send();
             }
             catch
             {
-                TextValid = false;
+                // error
+                IsLoading = false;
+                StateHasChanged();
                 return;
             }
 
-            //Обнуляем для текста
-            responses = new Responses();
-            
-            IsValid = UserInstance.Check();
-
-            if (!IsValid)
-                return;
-
-            UserInstance.Values = result;
-
-            Send();
-            
+            IsLoading = false;
             StateHasChanged();
         }
 
-        public async void Send()
+        public async Task Send()
         {
             HttpClient client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/api/api/");
-            request.Content = new StringContent(JsonConvert.SerializeObject(UserInstance.ToRequestData()), System.Text.Encoding.UTF8, "application/json");
-            var response = await client.SendAsync(request);
+            request.Content = new StringContent(JsonConvert.SerializeObject(UserInstance.ToRequestData()),
+                System.Text.Encoding.UTF8, "application/json");
+            var response = new HttpResponseMessage();
+
+            response = await client.SendAsync(request);
+
+
             var algsandcombs = JsonConvert.DeserializeObject<Responses>(await response.Content.ReadAsStringAsync());
-            responses = algsandcombs;
+            if (algsandcombs is null)
+            {
+                responses = new Responses();
+            }
+            else
+            {
+                responses = algsandcombs;
+            }
+
             str = await response.Content.ReadAsStringAsync();
             req = await request.Content.ReadAsStringAsync();
             Console.WriteLine(str);
@@ -115,7 +138,6 @@ namespace OutliersApp.Components
                 AlgResponses = new List<ModuleResponse>();
                 CombResponses = new List<ModuleResponse>();
             }
-            
         }
     }
 }

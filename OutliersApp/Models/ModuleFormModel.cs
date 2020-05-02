@@ -5,6 +5,25 @@ namespace OutliersApp.Models
 {
     public class ModuleFormModel
     {
+        public bool IsValid
+        {
+            get
+            {
+                BaseFormModel current = IsInternal ? (BaseFormModel)Internal : (BaseFormModel)External;
+                if (!current.IsValid)
+                {
+                    return false;
+                }
+
+                if (!WeightIsValid)
+                {
+                    return false;
+                }
+                
+                return true;
+            }
+        }
+
         public bool IsShown { get; set; }
         public bool IsInternal { get; set; }
         public InternalFormModel Internal { get; set; }
@@ -23,7 +42,7 @@ namespace OutliersApp.Models
             WeightIsValid = true;
         }
 
-        public Module GetCurrent()
+        public IncomingModuleRequest GetCurrent()
         {
             var module = IsInternal ? Internal.ToModule() : External.ToModule();
             module.Weight = Weight;

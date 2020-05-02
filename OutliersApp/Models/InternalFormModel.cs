@@ -4,13 +4,37 @@ using OutliersLib;
 
 namespace OutliersApp.Models
 {
-    public class InternalFormModel
+    public class InternalFormModel : BaseFormModel
     {
+        public override bool IsValid
+        {
+            get
+            {
+                if (Selected.Name == string.Empty)
+                {
+                    NotSelected = true;
+                    return false;
+                }
+                
+                foreach (var setting in Selected.Settings)
+                {
+                    if (!setting.IsValid)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        public bool NotSelected { get; set; }
         public PredefinedModule Selected { get; set; }
         public List<PredefinedModule> InternalModulesList { get; set; }
 
         public InternalFormModel(List<PredefinedModule> internalModulesList)
         {
+            NotSelected = false;
             Selected = new PredefinedModule();
             InternalModulesList = new List<PredefinedModule>(internalModulesList.Select(x => x.Clone() as PredefinedModule));
         }
@@ -26,9 +50,9 @@ namespace OutliersApp.Models
             return result;
         }
 
-        public Module ToModule()
+        public IncomingModuleRequest ToModule()
         {
-            var result = new Module();
+            var result = new IncomingModuleRequest();
             result.Internal = true;
             result.Name = Selected.Name;
             result.Params = SettingsToDict();

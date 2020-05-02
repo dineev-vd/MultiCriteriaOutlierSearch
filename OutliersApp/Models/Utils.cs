@@ -40,7 +40,7 @@ namespace OutliersApp.Models
             return true;
         }
 
-        public static void ChangeWeight(ChangeEventArgs args, Module Mod)
+        public static void ChangeWeight(ChangeEventArgs args, IncomingModuleRequest Mod)
         {
             if ((string) args.Value == string.Empty)
             {
@@ -58,7 +58,7 @@ namespace OutliersApp.Models
             }
         }
 
-        public static void ChangeValue(ChangeEventArgs value, KeyValuePair<string, Parameter> o, Module Mod)
+        public static void ChangeValue(ChangeEventArgs value, KeyValuePair<string, Parameter> o, IncomingModuleRequest Mod)
         {
             if ((string) value.Value == String.Empty)
             {
@@ -105,10 +105,11 @@ namespace OutliersApp.Models
                     $"Conversion error: SettingsForm with type {parameter.Value.Type} is not supported");
             }
 
+            result.Sort();
             return result;
         }
 
-        public static List<PredefinedModule> ConvertConfig(Dictionary<string, ModuleSettings> configModulesDict)
+        public static List<PredefinedModule> ConvertConfig(Dictionary<string, InternalModuleConfig> configModulesDict)
         {
             var result = new List<PredefinedModule>();
             foreach (var configModule in configModulesDict)
@@ -122,7 +123,7 @@ namespace OutliersApp.Models
 
         public static double[,] ParseInput(string input)
         {
-            string[] rows = input.Split('\n');
+            string[] rows = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
             double[,] result = new double[rows.Length, rows.First().Split(',').Length];
 
 

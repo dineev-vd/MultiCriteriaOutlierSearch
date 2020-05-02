@@ -4,11 +4,25 @@ using OutliersLib;
 
 namespace OutliersApp.Models
 {
-    public class ExternalFormModel
+    public class ExternalFormModel : BaseFormModel
     {
         public string Name { get; set; }
         public string Uri { get; set; }
         public List<ParameterModelBase> Settings { get; set; }
+
+        public override bool IsValid
+        {
+            get
+            {
+                foreach (var item in Settings)
+                {
+                    if (!item.IsValid)
+                        return false;
+                }
+
+                return true;
+            }
+        }
 
         public ExternalFormModel()
         {
@@ -17,9 +31,9 @@ namespace OutliersApp.Models
             Settings = new List<ParameterModelBase>();
         }
 
-        public Module ToModule()
+        public IncomingModuleRequest ToModule()
         {
-            var result = new Module();
+            var result = new IncomingModuleRequest();
             result.Internal = false;
             result.Uri = Uri;
             result.Name = Name;

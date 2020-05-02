@@ -10,58 +10,78 @@ namespace OutliersLib
 {
     public static class Interaction
     {
-        public static async Task<HttpRequestMessage> MakeRequest(Module module, object data)
+        public static HttpRequestMessage MakeRequest(IncomingModuleRequest incomingModuleRequest,
+            object data)
         {
             string uri = string.Empty;
-            if (!module.Internal)
+            if (!incomingModuleRequest.Internal)
             {
-                uri = module.Uri;
+                uri = incomingModuleRequest.Uri;
+
+                if (uri == string.Empty)
+                {
+                    throw new ArgumentException($"Ссылка на внешний модуль пустая");
+                }
             }
             else
             {
-                var config = await Utils.Read();
-                if (config.Algorithms.ContainsKey(module.Name))
+                var config = Utils.Config;
+
+                if (config.Algorithms.ContainsKey(incomingModuleRequest.Name))
                 {
-                    uri = config.Algorithms[module.Name].Uri;
+                    uri = config.Algorithms[incomingModuleRequest.Name].Uri;
                 }
 
-                if (config.Combinations.ContainsKey(module.Name))
+                if (config.Combinations.ContainsKey(incomingModuleRequest.Name))
                 {
-                    uri = config.Combinations[module.Name].Uri;
+                    uri = config.Combinations[incomingModuleRequest.Name].Uri;
+                }
+
+                if (uri == string.Empty)
+                {
+                    throw new ArgumentException($"Не удалось найти информацию о модуле с именем: {incomingModuleRequest.Name}");
                 }
             }
 
-            if (uri == string.Empty)
-            {
-                throw new ArgumentException($"cant resolve internal name : {module.Name}");
-            }
 
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
-            request.Content = new StringContent(JsonConvert.SerializeObject(new ModuleJson(data, module.Params)),
+            request.Content = new StringContent(
+                JsonConvert.SerializeObject(new OutcomingModuleRequest(data, incomingModuleRequest.Params)),
                 Encoding.UTF8, "application/json");
             return request;
         }
 
-        async static public Task<ModuleResponse> GetResponse(Module module, object data)
+        async static public Task<ModuleResponse> GetResponse(IncomingModuleRequest incomingModuleRequest, object data)
         {
             HttpResponseMessage response;
             try
             {
-                response = await Utils.httpClient.SendAsync(await MakeRequest(module, data));
+                response = await Utils.httpClient.SendAsync(MakeRequest(incomingModuleRequest, data));
             }
-            catch (Exception e)
+            catch (ArgumentException e)
             {
-                return new ModuleResponse(module.Name,e.Message, null);
+                return new ModuleResponse(incomingModuleRequest.Name, 500, e.Message, null);
+            }
+            catch
+            {
+                return new ModuleResponse(incomingModuleRequest.Name, 500,
+                    "При запросе от api к внутреннему модулю произошла ошибка", null);
             }
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            ModuleResponse moduleResponse = new ModuleResponse();
+            try
             {
-                return new ModuleResponse(module.Name,response.StatusCode.ToString(), null);
+                var result =
+                    JsonConvert.DeserializeObject<ModuleResponse>(await response.Content.ReadAsStringAsync());
+                result.Name = incomingModuleRequest.Name;
+                result.Status = (int)response.StatusCode;
+                return result;
             }
-
-            var moduleResponse = new ModuleResponse(module.Name, response.StatusCode.ToString(),
-                JsonConvert.DeserializeObject<List<double>>(await response.Content.ReadAsStringAsync()));
-            return moduleResponse;
+            catch
+            {
+                return new ModuleResponse(incomingModuleRequest.Name, 500,"Ответ модуля в неверном формате", null);
+            }
         }
     }
 }
+

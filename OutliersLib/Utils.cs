@@ -12,25 +12,58 @@ namespace OutliersLib
 {
     public static class Utils
     {
-        public async static Task<Config> Read()
+        const string ConfigPath = "config.json";
+        private const string ConfigAdressAppend = "/config/";
+        public static HttpClient httpClient = new HttpClient();
+        public static Config Config = new Config();
+
+        /// <summary>
+        /// Считывает конфигурацию
+        /// </summary>
+        /// <returns></returns>
+        public static void Read()
         {
-            Config dict;
-            dict = JsonConvert.DeserializeObject<Config>(File.ReadAllText("config.json"));
-            foreach(var m in dict.Algorithms)
+            Config config;
+            
+            // Считывание файла конфигурации
+            using(var fs = File.OpenText(ConfigPath))
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, m.Value.Uri + "/config");
+                config = JsonConvert.DeserializeObject<Config>(fs.ReadToEnd());
+            }
+            
+            // Опрашивание алгоритмов для сбора параметров
+            FillParameters(config.Algorithms).Wait();
+            FillParameters(config.Combinations).Wait();
+            
+            Config = config;
+        }
+
+        /// <summary>
+        /// Заполняет параметры в указанном массиве конфигураций, опрашивая модули
+        /// </summary>
+        /// <param name="moduleConfigs"></param>
+        /// <returns></returns>
+        public static async Task FillParameters(Dictionary<string, InternalModuleConfig> moduleConfigs)
+        {
+            foreach(var config in moduleConfigs)
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, config.Value.Uri + ConfigAdressAppend);
                 var response = await httpClient.SendAsync(request);
                 if(response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     continue;
                 }
 
-                m.Value.Parameters = JsonConvert.DeserializeObject<Dictionary<string, Parameter>>(await response.Content.ReadAsStringAsync());
+                try
+                {
+                    config.Value.Parameters = JsonConvert.DeserializeObject<Dictionary<string, Parameter>>(
+                        await response.Content.ReadAsStringAsync());
+                }
+                catch
+                {
+                    //TODO:Log => $"Произошла ошибка при получении параметров для модуля {algorithm.Key}");
+                }
             }
-
-            return dict;
         }
-
-        public static HttpClient httpClient = new HttpClient();
     }
 }

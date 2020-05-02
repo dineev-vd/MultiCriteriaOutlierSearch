@@ -6,11 +6,19 @@
     <input type="checkbox" class="custom-control-input" id="customControlValidation1" @onchange="OnChange" checked="@SettingsForm.Value">
     <label class="custom-control-label" for="customControlValidation1">@SettingsForm.Name</label>
 </div>
+@if (SettingsForm.IsCustom)
+    {
+        
+             <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
+    }
 
 @*TODO Сделать зависимость id От ID*@
 
 @code
 {
+    [Parameter]
+    public EventCallback<ParameterModelBase> OnDelete { get; set; }
+    
     [Parameter]
     public BoolParameterModel SettingsForm { get; set; }
 

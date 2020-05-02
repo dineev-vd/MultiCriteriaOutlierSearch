@@ -1,40 +1,24 @@
-﻿@using OutliersLib
-@using OutliersApp.Models.Parameters
-@namespace OutliersApp.Components
-
+﻿@using OutliersApp.Models.Parameters
 <div class="input-group" style="margin-bottom: 8px;">
     <div class="input-group-prepend">
         <span class="input-group-text">@SettingsForm.Name</span>
     </div>
-    <input type="text" placeholder="значение_по_умолчанию=@SettingsForm.Default" class="form-control @(SettingsForm.IsValid ? "" : "is-invalid")" @oninput=@(ChangeValue) required/>
-    @if (!SettingsForm.IsCustom)
-    {
-        <div class="invalid-feedback">
-            Введите число в промежутке от @SettingsForm.Min до @SettingsForm.Max.
-        </div>
-    }
-    else
-    {
-        <div class="invalid-feedback">
-            Введите число.
-        </div> 
-    }
-    
+    <input type="text" placeholder="Введите строку.." class="form-control" @oninput=@(ChangeValue) required/>
+
     @if (SettingsForm.IsCustom)
     {
         <div class="input-group-append">
-             <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
+            <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
         </div>
     }
 </div>
-
 
 @code{
     [Parameter]
     public EventCallback<ParameterModelBase> OnDelete { get; set; }
     
     [Parameter]
-    public DoubleParameterModel SettingsForm { get; set; }
+    public StringParameterModel SettingsForm { get; set; }
 
     public void ChangeValue(ChangeEventArgs args)
     {
@@ -53,7 +37,7 @@
         {
             try
             {
-                SettingsForm.Value = double.Parse(inputValue);
+                SettingsForm.Value = inputValue;
             }
             catch
             {

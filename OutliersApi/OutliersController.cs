@@ -38,9 +38,9 @@ namespace outliers_api
     public class ConfigController : Controller
     {
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            return Ok(await Utils.Read());
+            return Ok(Utils.Config);
         }
     }
 }

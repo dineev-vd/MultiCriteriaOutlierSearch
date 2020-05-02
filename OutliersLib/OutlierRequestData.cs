@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Microsoft.Extensions.Configuration;
@@ -11,14 +12,14 @@ namespace OutliersLib
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class OutlierRequestData
     {
-        public List<Module> Algorithms { get; set; }
-        public List<Module> Combinations { get; set; }
+        public List<IncomingModuleRequest> Algorithms { get; set; }
+        public List<IncomingModuleRequest> Combinations { get; set; }
         public double[,] Values { get; set; }
 
         public OutlierRequestData()
         {
-            Algorithms = new List<Module>();
-            Combinations = new List<Module>();
+            Algorithms = new List<IncomingModuleRequest>();
+            Combinations = new List<IncomingModuleRequest>();
             Values = new double[0,0];
         }
 
@@ -43,9 +44,10 @@ namespace OutliersLib
             List<ModuleResponse> algResponses)
         {
             var weightsList = new List<List<double>>();
+            // Алгоритмы, вернувшие ошибку отбрасываются
             foreach (var resp in algResponses)
             {
-                if (resp.Status != "OK")
+                if (resp.Status != (int)HttpStatusCode.OK)
                 {
                     continue;
                 }

@@ -10,7 +10,7 @@ def grubbs():
     try:
         data = np.array(request.json["Data"])
         if data.shape != (len(data), 1):
-            raise Exception
+            raise Exception("Размерность данных больше 1")
 
         data = data.reshape(1,-1).flatten()
         params = request.json["Params"]
@@ -29,9 +29,9 @@ def grubbs():
         a = [0 for i in range(0,len(data))]
         for i in indices:
             a[i] = 1
-    except:
-        return jsonify("error:grubbs"), 400
-    return jsonify(a)
+    except Exception as e:
+        return jsonify({"message":str(e)}), 400
+    return jsonify({"message":"OK", "data":a})
 
 @app.route('/algorithms/grubbs/config/',methods=['GET'])
 def config():

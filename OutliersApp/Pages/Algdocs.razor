@@ -1,0 +1,76 @@
+﻿@page "/algdocs"
+@using Newtonsoft.Json
+@using OutliersLib
+
+<div class="container bg-light border rounded shadow p-3">
+    @if (ConfigNotLoaded)
+    {
+        <div class="container mb-4 border border-danger rounded p-3">
+            Не удалось загрузить Config.
+        </div>
+    }
+    @foreach (var alg in Config.Algorithms)
+    {
+        <div class="container border rounded mb-3 p-3">
+            <h2>@(alg.Value.CoolName)</h2><span class="badge badge-secondary">id:"@alg.Key"</span>
+            <h5>Параметры@(alg.Value.Parameters.Count == 0 ? " отсутствуют." : ":")</h5>
+
+            @foreach (var param in alg.Value.Parameters)
+            {
+                <p>@param.Key :</p>
+                <ul>
+                    <li>Тип: @param.Value.Type</li>
+                    @if (param.Value.Type == "double")
+                    {
+                        <li>Мин. значение: @param.Value.Min</li>
+                        <li>Макс. значение: @param.Value.Max</li>
+                    }
+                    <li>Значение по умолчанию: @param.Value.Default</li>
+                    @if (param.Value.Type == "select" && !(param.Value.Data is null))
+                    {
+                        <div>Опции для выбора:</div>
+                        <ul>
+                            @foreach (var item in param.Value.Data)
+                            {
+                                <li>@item</li>
+                            }
+                        </ul>
+                    }
+                </ul>
+            }
+        </div>
+    }
+</div>
+
+@code{
+
+    public Config Config { get; set; }
+    public bool ConfigNotLoaded { get; set; }
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        Config = new Config();
+        ConfigNotLoaded = false;
+        try
+        {
+            await FetchData();
+        }
+        catch
+        {
+            ConfigNotLoaded = true;
+        }
+        await base.OnInitializedAsync();
+    }
+
+    public async Task FetchData()
+    {
+        HttpClient client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/api/config/");
+        var response = await client.SendAsync(request);
+        Config = JsonConvert.DeserializeObject<Config>(await response.Content.ReadAsStringAsync(),
+            new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+        StateHasChanged();
+    }
+
+}
