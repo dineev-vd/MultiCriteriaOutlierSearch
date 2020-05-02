@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OutliersApp.Models.Parameters;
+using OutliersLib.ParameterTypes;
 
 namespace OutliersApp.Models
 {
@@ -9,16 +10,16 @@ namespace OutliersApp.Models
     {
         public string Name { get; set; }
         public string CoolName { get; set; }
-        public List<ParameterModelBase> Settings { get; set; }
+        public Dictionary<string, ParameterBase> Settings { get; set; }
 
         public PredefinedModule()
         {
             Name = string.Empty;
             CoolName = string.Empty;
-            Settings = new List<ParameterModelBase>();
+            Settings = new Dictionary<string, ParameterBase>();
         }
 
-        public PredefinedModule(string name, string coolName, List<ParameterModelBase> settings)
+        public PredefinedModule(string name, string coolName, Dictionary<string, ParameterBase> settings)
         {
             Name = name;
             CoolName = coolName;
@@ -28,7 +29,7 @@ namespace OutliersApp.Models
         public object Clone()
         {
             return new PredefinedModule(Name, CoolName,
-                new List<ParameterModelBase>(Settings.Select(x => x.Clone() as ParameterModelBase)));
+                new Dictionary<string, ParameterBase>(Settings.Select(x => x.Clone() as KeyValuePair<string,ParameterBase>)));
         }
     }
 }

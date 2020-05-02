@@ -1,8 +1,8 @@
-﻿namespace OutliersApp.Models.Parameters
+﻿namespace OutliersApp.Models.ParameterModels
 {
     public class StringParameterModel : ParameterModelBase
     {
-        public override int Id { get; set; } = 3;
+        public override int Id { get; } = 3;
         public string Default { get; set; }
         public string Value { get; set; }
 
@@ -18,6 +18,11 @@
             Default = string.Empty;
             Value = Default;
             IsCustom = true;
+        }
+
+        public override object Clone()
+        {
+            return new StringParameterModel(Name, CoolName, Default);
         }
     }
 }

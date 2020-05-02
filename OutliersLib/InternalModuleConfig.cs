@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using OutliersApp.Models.Parameters;
+using OutliersLib.ParameterTypes;
 
 namespace OutliersLib
 {
@@ -8,13 +10,14 @@ namespace OutliersLib
     public class InternalModuleConfig { 
         public string Uri { get; set; }
         public string CoolName { get; set; }
-        public Dictionary<string, Parameter> Parameters { get; set; }
+
+        public Parameters Parameters { get; set; }
 
         public InternalModuleConfig()
         {
             Uri = "";
             CoolName = "";
-            Parameters = new Dictionary<string, Parameter>();
+            Parameters = new Parameters();
         }
     }
     

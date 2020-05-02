@@ -3,52 +3,21 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
-using OutliersApp.Models.Parameters;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+//using OutliersApp.Models.Parameters;
 using OutliersLib;
+using OutliersLib.ParameterTypes;
 
 namespace OutliersApp.Models
 {
     public static class Utils
     {
-       public static List<ParameterModelBase> ConvertConfigSettings(Dictionary<string, Parameter> configParameters)
+       public static List<ParameterModelBase> ConvertConfigSettings(OutliersLib.ParameterTypes.Parameters configParameters)
         {
             var result = new List<ParameterModelBase>();
-            foreach (var parameter in configParameters)
+            foreach (var parameter in configParameters.BoolParameters)
             {
-                if (parameter.Value.Type == "double")
-                {
-                    result.Add(new DoubleParameterModel(parameter.Key,parameter.Value.CoolName,  parameter.Value.Min, parameter.Value.Max,
-                        (double) parameter.Value.Default));
-                    continue;
-                }
-
-                if (parameter.Value.Type == "select")
-                {
-                    result.Add(new SelectParameterModel(parameter.Key, parameter.Value.CoolName,parameter.Value.Data,
-                        (string) parameter.Value.Default));
-                    continue;
-                }
-
-                if (parameter.Value.Type == "bool")
-                {
-                    result.Add(new BoolParameterModel(parameter.Key,parameter.Value.CoolName, (bool) parameter.Value.Default));
-                    continue;
-                }
-                
-                if (parameter.Value.Type == "string")
-                {
-                    result.Add(new StringParameterModel(parameter.Key, parameter.Value.CoolName,(string) parameter.Value.Default));
-                    continue;
-                }
-                
-                if (parameter.Value.Type == "int")
-                {
-                    result.Add(new IntParameterModel(parameter.Key, parameter.Value.CoolName,(int)parameter.Value.Min,(int)parameter.Value.Max,(int) parameter.Value.Default));
-                    continue;
-                }
-
-                throw new NotImplementedException(
-                    $"Conversion error: SettingsForm with type {parameter.Value.Type} is not supported");
+                result.
             }
 
             result.Sort();

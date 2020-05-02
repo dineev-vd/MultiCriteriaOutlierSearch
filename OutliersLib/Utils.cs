@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using OutliersLib.ParameterTypes;
 
 //TODO Проверка конфигурации модулей на корректность
 
@@ -58,8 +59,8 @@ namespace OutliersLib
                 try
                 {
                     var bytes = await response.Content.ReadAsByteArrayAsync();
-                    config.Value.Parameters = JsonConvert.DeserializeObject<Dictionary<string, Parameter>>(
-                        Encoding.UTF8.GetString(bytes, 0, bytes.Length));
+                    var str = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+                    config.Value.Parameters = JsonConvert.DeserializeObject<Parameters>(str);
                 }
                 catch
                 {

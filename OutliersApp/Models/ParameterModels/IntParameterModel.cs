@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace OutliersApp.Models.Parameters
+namespace OutliersApp.Models.ParameterModels
 {
     public class IntParameterModel : ParameterModelBase
     {
         int _value;
-        public override int Id { get; set; } = 5;
+        public override int Id { get; } = 5;
         public int Min { get; set; }
         public int Max { get; set; }
         public int Default { get; set; }
@@ -36,6 +36,11 @@ namespace OutliersApp.Models.Parameters
         public IntParameterModel(string name, string coolName) : base(name, coolName)
         {
             IsCustom = true;
+        }
+
+        public override object Clone()
+        {
+            return new IntParameterModel(Name, CoolName, Min, Max, Default);
         }
     }
 }

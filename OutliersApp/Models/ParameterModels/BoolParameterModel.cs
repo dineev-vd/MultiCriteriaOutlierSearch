@@ -1,8 +1,8 @@
-﻿namespace OutliersApp.Models.Parameters
+﻿namespace OutliersApp.Models.ParameterModels
 {
     public class BoolParameterModel : ParameterModelBase
     {
-        public override int Id { get; set; } = 4;
+        public override int Id { get; } = 4;
         public bool Default { get; set; }
         public bool Value { get; set; }
 
@@ -17,6 +17,11 @@
         {
             Value = false;
             IsCustom = true;
+        }
+
+        public override object Clone()
+        {
+            return new BoolParameterModel(Name, CoolName, Default);
         }
     }
 }

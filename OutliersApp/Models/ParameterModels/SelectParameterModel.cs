@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace OutliersApp.Models.Parameters
+namespace OutliersApp.Models.ParameterModels
 {
     public class SelectParameterModel : ParameterModelBase
     {
-        public override int Id { get; set; } = 2;
+        public override int Id { get; } = 2;
         public string Value { get; set; }
         public string Default { get; set; }
         public List<string> Options { get; set; }
@@ -15,6 +15,11 @@ namespace OutliersApp.Models.Parameters
             Default = def;
             Value = Default;
             IsCustom = false;
+        }
+
+        public override object Clone()
+        {
+            return new SelectParameterModel(Name, CoolName,Options, Default);
         }
     }
 }
