@@ -1,11 +1,12 @@
-﻿using System;
+﻿using OutliersApp.Models.Parameters;
+using System;
 
 namespace OutliersApp.Models.ParameterModels
 {
-    public class IntParameterModel : ParameterModelBase
+    public class IntParameterModel : IntParameter
     {
         int _value;
-        public override int Id { get; } = 5;
+
         public int Min { get; set; }
         public int Max { get; set; }
         public int Default { get; set; }
@@ -15,7 +16,7 @@ namespace OutliersApp.Models.ParameterModels
             get => _value;
             set
             {
-                if (!(Min <= value && value <= Max) && !IsCustom)
+                if (!(Min <= value && value <= Max))
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -24,23 +25,13 @@ namespace OutliersApp.Models.ParameterModels
             }
         }
 
-        public IntParameterModel(string name,string coolName, int min, int max, int def) : base(name, coolName)
+        public IntParameterModel(string coolName)
         {
-            Min = min;
-            Max = max;
-            Default = def;
+            CoolName = coolName;
+            Min = int.MinValue;
+            Max = int.MaxValue;
+            Default = 0;
             Value = Default;
-            IsCustom = false;
-        }
-
-        public IntParameterModel(string name, string coolName) : base(name, coolName)
-        {
-            IsCustom = true;
-        }
-
-        public override object Clone()
-        {
-            return new IntParameterModel(Name, CoolName, Min, Max, Default);
         }
     }
 }

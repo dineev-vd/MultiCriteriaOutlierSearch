@@ -1,6 +1,9 @@
 ﻿@page "/combdocs"
 @using Newtonsoft.Json
+@using OutliersApp.Models.Parameters
 @using OutliersLib
+@using OutliersLib.ParameterTypes
+@using System.IO
 
 
 <div class="container bg-light border rounded shadow p-3">
@@ -10,28 +13,38 @@
             Не удалось загрузить Config.
         </div>
     }
-    @foreach (var comb in Config.Combinations)
+    @foreach (var alg in Config.Algorithms)
     {
         <div class="container border rounded mb-3 p-3">
-            <h2>@(comb.Value.CoolName)</h2><span class="badge badge-secondary">id:"@comb.Key"</span>
-            <h5>Параметры@(comb.Value.Parameters.Count == 0 ? " отсутствуют." : ":")</h5>
+            <h2>@(alg.Value.CoolName)</h2><span class="badge badge-secondary">id:"@alg.Key"</span>
+            <h5>Описание: </h5>
+            <p>@(GetDocs(alg.Key))</p>
+            <h5>Параметры@(alg.Value.Parameters.Count == 0 ? " отсутствуют." : ":")</h5>
 
-            @foreach (var param in comb.Value.Parameters)
+            @foreach (var param in alg.Value.Parameters)
             {
                 <p>@param.Key :</p>
                 <ul>
-                    <li>Тип: @param.Value.Type</li>
-                    @if (param.Value.Type == "double")
+                    <li>Тип: @param.Value.GetType().Name</li>
+                    @if (param.Value is DoubleParameter doubleParameter)
                     {
-                        <li>Мин. значение: @param.Value.Min</li>
-                        <li>Макс. значение: @param.Value.Max</li>
+                        <li>Мин. значение: @doubleParameter.Min</li>
+                        <li>Макс. значение: @doubleParameter.Max</li>
                     }
-                    <li>Значение по умолчанию: @param.Value.Default</li>
-                    @if (param.Value.Type == "select" && !(param.Value.Data is null))
+                    @if (param.Value is IntParameter intParameter)
+                    {
+                        <li>Мин. значение: @intParameter.Min</li>
+                        <li>Макс. значение: @intParameter.Max</li>
+                    }
+                    @if (param.Value.DefaultToString() != string.Empty)
+                    {
+                        <li>Значение по умолчанию: @param.Value.DefaultToString()</li>
+                    }
+                    @if (param.Value is SelectParameter && !((param.Value as SelectParameter).Options is null))
                     {
                         <div>Опции для выбора:</div>
                         <ul>
-                            @foreach (var item in param.Value.Data)
+                            @foreach (var item in (param.Value as SelectParameter).Options)
                             {
                                 <li>@item</li>
                             }
@@ -77,6 +90,18 @@
         var response = await client.SendAsync(request);
         Config = JsonConvert.DeserializeObject<Config>(await response.Content.ReadAsStringAsync(),
             new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+    }
+    
+    public string GetDocs(string key)
+    {
+        try
+        {
+            return File.ReadAllText("Docs/Combinations/" + key + ".txt");
+        }
+        catch
+        {
+            return "отсутствует.";
+        }
     }
 
 }

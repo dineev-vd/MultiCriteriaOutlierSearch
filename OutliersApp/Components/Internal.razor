@@ -3,6 +3,7 @@
 @using OutliersApp.Models
 @using OutliersApp.Components.Parameters
 @using OutliersApp.Models.ParameterModels
+@using Microsoft.AspNetCore.Components.Web
 @namespace OutliersApp.Components
 
 <div class="input-group my-2">
@@ -26,29 +27,29 @@
 @{ int local = 0; }
 @foreach (var setting in Model.Selected.Settings)
 {
-    @if (setting is DoubleParameterModel)
+    @if (setting.Value is DoubleParameterModel)
     {
-        <DoubleParameter SettingsForm="@((DoubleParameterModel) setting)"></DoubleParameter>
+        <DoubleParameter SettingsForm="@setting"></DoubleParameter>
     }
 
-    @if (setting is SelectParameterModel)
+    @if (setting.Value is SelectParameterModel)
     {
-        <SelectParameter SettingsForm="@((SelectParameterModel) setting)"></SelectParameter>
+        <SelectParameterComponent SettingsForm="@setting"></SelectParameterComponent>
     }
 
-    @if (setting is BoolParameterModel)
+    @if (setting.Value is BoolParameterModel)
     {
-        <BoolParameter Id="@(Id + "-i-" + local)" SettingsForm="@((BoolParameterModel) setting)"></BoolParameter>
+        <BoolParameterComponent Id="@(Id + "-i-" + local)" SettingsForm="@setting"></BoolParameterComponent>
     }
 
-    @if (setting is StringParameterModel)
+    @if (setting.Value is StringParameterModel)
     {
-        <StringParameter SettingsForm="@((StringParameterModel) setting)"></StringParameter>
+        <StringParameterComponent SettingsForm="@setting"></StringParameterComponent>
     }
-    
-    @if (setting is IntParameterModel)
+
+    @if (setting.Value is IntParameterModel)
     {
-        <IntParameter SettingForm="@((IntParameterModel) setting)"></IntParameter>
+        <IntParameterComponent SettingForm="@setting"></IntParameterComponent>
     }
     local++;
 }

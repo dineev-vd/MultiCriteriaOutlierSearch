@@ -1,26 +1,23 @@
-﻿using System;
+﻿//using OutliersApp.Models.Parameters;
+using OutliersLib;
+using OutliersLib.ParameterTypes;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-//using OutliersApp.Models.Parameters;
-using OutliersLib;
-using OutliersLib.ParameterTypes;
 
 namespace OutliersApp.Models
 {
     public static class Utils
     {
-       public static List<ParameterModelBase> ConvertConfigSettings(OutliersLib.ParameterTypes.Parameters configParameters)
+        public static Dictionary<string, ParameterBase> ConvertConfigSettings(OutliersLib.ParameterTypes.Parameters configParameters)
         {
-            var result = new List<ParameterModelBase>();
-            foreach (var parameter in configParameters.BoolParameters)
+            var result = new Dictionary<string, ParameterBase>();
+            foreach (var parameter in configParameters)
             {
-                result.
+                result.Add(parameter.Key, parameter.Value);
             }
 
-            result.Sort();
             return result;
         }
 
@@ -47,7 +44,7 @@ namespace OutliersApp.Models
                 string[] doubleStrings = rows[i].Split(',');
                 for (int j = 0; j < result.GetLength(1); j++)
                 {
-                    result[i, j] = double.Parse(doubleStrings[j], new NumberFormatInfo {NumberDecimalSeparator = "."});
+                    result[i, j] = double.Parse(doubleStrings[j], new NumberFormatInfo { NumberDecimalSeparator = "." });
                 }
             }
 

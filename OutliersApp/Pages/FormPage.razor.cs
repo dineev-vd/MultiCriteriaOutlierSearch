@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using OutliersApp.Models;
 using OutliersLib;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Utils = OutliersApp.Models.Utils;
-using OutliersApp.Components;
 
 namespace OutliersApp.Pages
 {
@@ -47,7 +44,7 @@ namespace OutliersApp.Pages
             {
                 Config = new Config();
             }
-            
+
             PredefinedAlgorithms = Utils.ConvertConfig(Config.Algorithms);
             PredefinedCombinations = Utils.ConvertConfig(Config.Combinations);
             await base.OnInitializedAsync();
@@ -59,7 +56,7 @@ namespace OutliersApp.Pages
             var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/api/config/");
             var response = await client.SendAsync(request);
             Config = JsonConvert.DeserializeObject<Config>(await response.Content.ReadAsStringAsync(),
-                new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+                new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
         }
 
         public void OnClick()
@@ -97,7 +94,7 @@ namespace OutliersApp.Pages
                 StateHasChanged();
                 return;
             }
-            
+
             IsLoading = false;
             StateHasChanged();
         }
@@ -130,6 +127,6 @@ namespace OutliersApp.Pages
             StateHasChanged();
         }
 
-        
+
     }
 }

@@ -4,18 +4,19 @@
 @using System.Linq
 @using OutliersApp.Components.Parameters
 @using OutliersApp.Models.ParameterModels
+@using OutliersLib.ParameterTypes
+@using Microsoft.AspNetCore.Components.Web
 @namespace OutliersApp.Components
-
 @*Имя*@
 <div class="input-group" style="margin-bottom: 8px; margin-top:8px;">
     <div class="input-group-prepend">
         <span class="input-group-text">Имя</span>
-    </div><input type="text" class="form-control" @bind="@Model.Name"/>
+    </div><input type="text" class="form-control" @bind="@Model.Name" />
 </div>
 <div class="input-group" style="margin-bottom: 8px; margin-top:8px;">
     <div class="input-group-prepend">
         <span class="input-group-text">URL</span>
-    </div><input type="text" class="form-control" @bind="@Model.Uri"/>
+    </div><input type="text" class="form-control" @bind="@Model.Uri" />
 </div>
 
 <p>Параметры:</p>
@@ -37,24 +38,24 @@
 @{ int local = 0;}
 @foreach (var setting in Model.Settings)
 {
-    @if (setting is DoubleParameterModel)
+    @if (setting.Value is DoubleParameterModel)
     {
-        <DoubleParameter SettingsForm="@((DoubleParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></DoubleParameter>
+        <DoubleParameterComponent SettingsForm="@setting" OnDelete="@((i) => Model.Settings.Remove(i.Key))"></DoubleParameterComponent>
     }
 
-    @if (setting is SelectParameterModel)
+    @if (setting.Value is SelectParameterModel)
     {
-        <SelectParameter SettingsForm="@((SelectParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></SelectParameter>
+        <SelectParameterComponent SettingsForm="@setting" OnDelete="@((i) =>  Model.Settings.Remove(i.Key))"></SelectParameterComponent>
     }
 
-    @if (setting is BoolParameterModel)
+    @if (setting.Value is BoolParameterModel)
     {
-        <BoolParameter Id="@(Id+"-e-"+local)" SettingsForm="@((BoolParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></BoolParameter>
+        <BoolParameterComponent Id="@(Id+"-e-"+local)" SettingsForm="@setting" OnDelete="@((i) => Model.Settings.Remove(i.Key))"></BoolParameterComponent>
     }
-    
-    @if (setting is StringParameterModel)
+
+    @if (setting.Value is StringParameterModel)
     {
-        <StringParameter SettingsForm="@((StringParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></StringParameter>
+        <StringParameterComponent SettingsForm="@setting" OnDelete="@((i) => Model.Settings.Remove(i.Key))"></StringParameterComponent>
     }
     local++;
 }
@@ -67,7 +68,7 @@
     public ExternalFormModel Model { get; set; }
 
     public string Selected { get; set; }
-    
+
     public string CustomName { get; set; }
 
     public void OnChange(ChangeEventArgs args)
@@ -83,32 +84,30 @@
             return;
         }
 
-        var query = from item in Model.Settings
-            where item.Name == CustomName
-            select item;
-
-        if (query.Count() > 0)
+        if (Model.Settings.ContainsKey(CustomName))
         {
-            // Когда повтор параметров
             return;
         }
-        
+
         if (Selected == "double")
         {
-            Model.Settings.Add(new DoubleParameterModel(CustomName, CustomName));
+            Model.Settings.Add(CustomName, new DoubleParameterModel(CustomName));
         }
 
         if (Selected == "bool")
         {
-            Model.Settings.Add(new BoolParameterModel(CustomName, CustomName));
+            Model.Settings.Add(CustomName, new BoolParameterModel(CustomName));
         }
 
         if (Selected == "string")
         {
-            Model.Settings.Add(new StringParameterModel(CustomName, CustomName));
+            Model.Settings.Add(CustomName, new StringParameterModel(CustomName));
         }
-        
-        Model.Settings.Sort();
+
+        if (Selected == "int")
+        {
+            Model.Settings.Add(CustomName, new IntParameterModel(CustomName));
+        }
     }
 
 }

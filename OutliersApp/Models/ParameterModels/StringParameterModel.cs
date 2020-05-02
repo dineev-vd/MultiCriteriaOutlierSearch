@@ -1,28 +1,17 @@
-﻿namespace OutliersApp.Models.ParameterModels
+﻿using OutliersLib.ParameterTypes;
+
+namespace OutliersApp.Models.ParameterModels
 {
-    public class StringParameterModel : ParameterModelBase
+    public class StringParameterModel : StringParameter
     {
-        public override int Id { get; } = 3;
         public string Default { get; set; }
         public string Value { get; set; }
 
-        public StringParameterModel(string name,string coolName, string def) : base(name, coolName)
+        public StringParameterModel(string coolName)
         {
-            Default = def;
-            Value = Default;
-            IsCustom = false;
-        }
-
-        public StringParameterModel(string name, string coolName) : base(name, coolName)
-        {
+            CoolName = coolName;
             Default = string.Empty;
             Value = Default;
-            IsCustom = true;
-        }
-
-        public override object Clone()
-        {
-            return new StringParameterModel(Name, CoolName, Default);
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
+﻿using OutliersLib.ParameterTypes;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using OutliersApp.Models.Parameters;
-using OutliersLib.ParameterTypes;
 
 namespace OutliersApp.Models
 {
@@ -28,8 +26,18 @@ namespace OutliersApp.Models
 
         public object Clone()
         {
-            return new PredefinedModule(Name, CoolName,
-                new Dictionary<string, ParameterBase>(Settings.Select(x => x.Clone() as KeyValuePair<string,ParameterBase>)));
+            return new PredefinedModule(Name, CoolName, CloneDict(Settings));
+        }
+
+        public Dictionary<string, ParameterBase> CloneDict(Dictionary<string, ParameterBase> dict)
+        {
+            var result = new Dictionary<string, ParameterBase>();
+            foreach (var item in dict)
+            {
+                result.Add(item.Key, (ParameterBase)item.Value.Clone());
+            }
+
+            return result;
         }
     }
 }

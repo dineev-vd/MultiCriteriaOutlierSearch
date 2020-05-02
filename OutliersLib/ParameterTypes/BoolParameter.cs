@@ -6,5 +6,11 @@ namespace OutliersLib.ParameterTypes
     {
         public bool Default { get; set; }
         public bool Value { get; set; }
+        
+        
+        public override string DefaultToString()
+        {
+            return Default.ToString();
+        }
     }
 }

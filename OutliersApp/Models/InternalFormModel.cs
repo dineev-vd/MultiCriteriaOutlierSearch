@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using OutliersLib;
+using System.Collections.Generic;
 using System.Linq;
-using OutliersLib;
 
 namespace OutliersApp.Models
 {
@@ -15,10 +15,10 @@ namespace OutliersApp.Models
                     NotSelected = true;
                     return false;
                 }
-                
+
                 foreach (var setting in Selected.Settings)
                 {
-                    if (!setting.IsValid)
+                    if (!setting.Value.IsValid)
                     {
                         return false;
                     }
@@ -38,13 +38,13 @@ namespace OutliersApp.Models
             Selected = new PredefinedModule();
             InternalModulesList = new List<PredefinedModule>(internalModulesList.Select(x => x.Clone() as PredefinedModule));
         }
-        
+
         public Dictionary<string, object> SettingsToDict()
         {
             var result = new Dictionary<string, object>();
             foreach (var setting in Selected.Settings)
             {
-                result.Add(setting.Name, setting.Value);
+                result.Add(setting.Key, setting.Value);
             }
 
             return result;

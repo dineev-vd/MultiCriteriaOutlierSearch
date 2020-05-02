@@ -1,20 +1,20 @@
-﻿using System;
+﻿using OutliersLib.ParameterTypes;
+using System;
 
 namespace OutliersApp.Models.ParameterModels
 {
-    public class DoubleParameterModel : ParameterModelBase
+    public class DoubleParameterModel : DoubleParameter
     {
         double _value;
-        public override int Id { get; } = 1;
         public double Min { get; set; }
         public double Max { get; set; }
         public double Default { get; set; }
         public double Value
         {
-            get { return _value;}
+            get { return _value; }
             set
             {
-                if (!(Min <= value && value <= Max) && !IsCustom)
+                if (!(Min <= value && value <= Max))
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -23,23 +23,13 @@ namespace OutliersApp.Models.ParameterModels
             }
         }
 
-        public DoubleParameterModel(string name,string coolName, double min, double max, double def) : base(name, coolName)
+        public DoubleParameterModel(string coolName)
         {
-            Min = min;
-            Max = max;
-            Default = def;
+            CoolName = coolName;
+            Min = double.NegativeInfinity;
+            Max = double.PositiveInfinity;
+            Default = 0;
             Value = Default;
-            IsCustom = false;
-        }
-
-        public DoubleParameterModel(string name, string coolName) : base(name, coolName)
-        {
-            IsCustom = true;
-        }
-
-        public override object Clone()
-        {
-            return new DoubleParameterModel(Name,CoolName, Min, Max, Default);
         }
     }
 }

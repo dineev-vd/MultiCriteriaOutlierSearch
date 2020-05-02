@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using OutliersLib;
+﻿using OutliersLib;
+using System.Collections.Generic;
 
 namespace OutliersApp.Models
 {
@@ -19,7 +19,7 @@ namespace OutliersApp.Models
                 {
                     return false;
                 }
-                
+
                 return true;
             }
         }

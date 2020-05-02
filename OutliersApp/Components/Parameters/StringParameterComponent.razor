@@ -1,0 +1,61 @@
+﻿@using OutliersApp.Models.Parameters
+@using OutliersApp.Models.ParameterModels
+@using OutliersLib.ParameterTypes
+@namespace OutliersApp.Components.Parameters
+
+<div class="input-group" style="margin-bottom: 8px;">
+    <div class="input-group-prepend">
+        <span class="input-group-text">@model.CoolName </span>
+    </div>
+    <input type="text" placeholder="Введите строку.." class="form-control" @oninput=@(ChangeValue) required />
+
+    @if (model.IsCustom)
+    {
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" @onclick="@(async e => await OnDelete.InvokeAsync(SettingsForm))">Удалить</button>
+        </div>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public EventCallback<KeyValuePair<string, ParameterBase>> OnDelete { get; set; }
+
+    [Parameter]
+    public KeyValuePair<string, ParameterBase> SettingsForm { get; set; }
+
+    private StringParameterModel model
+    {
+        get => SettingsForm.Value as StringParameterModel;
+    }
+
+    public void ChangeValue(ChangeEventArgs args)
+    {
+        string inputValue = args.Value.ToString();
+
+        if (inputValue == string.Empty)
+        {
+            if (model.IsCustom)
+            {
+                model.IsValid = false;
+                return;
+            }
+            model.Value = model.Default;
+        }
+        else
+        {
+            try
+            {
+                model.Value = inputValue;
+            }
+            catch
+            {
+                model.IsValid = false;
+                return;
+            }
+        }
+
+        model.IsValid = true;
+    }
+
+}

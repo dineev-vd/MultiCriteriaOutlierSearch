@@ -1,7 +1,9 @@
 ﻿@page "/algdocs"
 @using Newtonsoft.Json
-@using OutliersLib
+@using OutliersLib.ParameterTypes
 @using System.IO
+@using OutliersApp.Models.Parameters
+@using OutliersLib
 
 <div class="container bg-light border rounded shadow p-3">
     @if (ConfigNotLoaded)
@@ -22,18 +24,26 @@
             {
                 <p>@param.Key :</p>
                 <ul>
-                    <li>Тип: @param.Value.Type</li>
-                    @if (param.Value.Type == "double")
+                    <li>Тип: @param.Value.GetType().Name</li>
+                    @if (param.Value is DoubleParameter doubleParameter)
                     {
-                        <li>Мин. значение: @param.Value.Min</li>
-                        <li>Макс. значение: @param.Value.Max</li>
+                        <li>Мин. значение: @doubleParameter.Min</li>
+                        <li>Макс. значение: @doubleParameter.Max</li>
                     }
-                    <li>Значение по умолчанию: @param.Value.Default</li>
-                    @if (param.Value.Type == "select" && !(param.Value.Data is null))
+                    @if (param.Value is IntParameter intParameter)
+                    {
+                        <li>Мин. значение: @intParameter.Min</li>
+                        <li>Макс. значение: @intParameter.Max</li>
+                    }
+                    @if (param.Value.DefaultToString() != string.Empty)
+                    {
+                        <li>Значение по умолчанию: @param.Value.DefaultToString()</li>
+                    }
+                    @if (param.Value is SelectParameter && !((param.Value as SelectParameter).Options is null))
                     {
                         <div>Опции для выбора:</div>
                         <ul>
-                            @foreach (var item in param.Value.Data)
+                            @foreach (var item in (param.Value as SelectParameter).Options)
                             {
                                 <li>@item</li>
                             }
@@ -68,7 +78,7 @@
         {
             Config = new Config();
         }
-        
+
         await base.OnInitializedAsync();
     }
 
@@ -92,4 +102,5 @@
             return "отсутствует.";
         }
     }
+
 }

@@ -1,0 +1,71 @@
+﻿@using OutliersLib
+@using OutliersApp.Models.Parameters
+@using OutliersApp.Models.ParameterModels
+@using Microsoft.AspNetCore.Mvc.ApplicationModels
+@using OutliersLib.ParameterTypes
+@namespace OutliersApp.Components.Parameters
+
+<div class="input-group" style="margin-bottom: 8px;">
+    <div class="input-group-prepend">
+        <span class="input-group-text">@SettingsForm.Value.CoolName</span>
+    </div>
+    <input type="text" placeholder="значение_по_умолчанию=@model.Default" class="form-control @(SettingsForm.Value.IsValid ? "" : "is-invalid")" @oninput=@(ChangeValue) required/>
+    @if (!model.IsCustom)
+    {
+        <div class="invalid-feedback">
+            Введите число в промежутке от @model.Min до @model.Max.
+        </div>
+    }
+    else
+    {
+        <div class="invalid-feedback">
+            Введите число.
+        </div> 
+    }
+    
+    @if (SettingsForm.Value.IsCustom)
+    {
+        <div class="input-group-append">
+             <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
+        </div>
+    }
+</div>
+
+
+@code{
+    [Parameter]
+    public EventCallback<KeyValuePair<string, ParameterBase>> OnDelete { get; set; }
+    
+    [Parameter]
+    public KeyValuePair<string, ParameterBase> SettingsForm { get; set; }
+
+    private DoubleParameterModel model
+    {
+        get => SettingsForm.Value as DoubleParameterModel; }
+
+    public void ChangeValue(ChangeEventArgs args)
+    {
+        string inputValue = args.Value.ToString();
+        var form = SettingsForm.Value as DoubleParameterModel;
+        
+        if (inputValue == string.Empty)
+        {
+            form.Value = form.Default;
+        }
+        else
+        {
+            try
+            {
+                form.Value = double.Parse(inputValue);
+            }
+            catch
+            {
+                form.IsValid = false;
+                return;
+            }
+        }
+
+        form.IsValid = true;
+    }
+
+}

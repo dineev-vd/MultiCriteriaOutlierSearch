@@ -1,27 +1,28 @@
 ﻿@using OutliersLib
 @using OutliersApp.Models.Parameters
 @using OutliersApp.Models.ParameterModels
-@namespace OutliersApp.Components
+@using OutliersLib.ParameterTypes
+@namespace OutliersApp.Components.Parameters
 
 <div class="input-group" style="margin-bottom: 8px;">
     <div class="input-group-prepend">
-        <span class="input-group-text">@SettingsForm.CoolName</span>
+        <span class="input-group-text">@model.CoolName </span>
     </div>
-    <input type="text" placeholder="значение_по_умолчанию=@SettingsForm.Default" class="form-control @(SettingsForm.IsValid ? "" : "is-invalid")" @oninput=@(ChangeValue) required/>
-    @if (!SettingsForm.IsCustom)
+    <input type="text" placeholder="значение_по_умолчанию=@model.Default" class="form-control @(model.IsValid ? "" : "is-invalid")" @oninput=@(ChangeValue) required />
+    @if (!model.IsCustom)
     {
         <div class="invalid-feedback">
-            Введите число в промежутке от @SettingsForm.Min до @SettingsForm.Max.
+            Введите число в промежутке от @model.Min до @model.Max.
         </div>
     }
     else
     {
         <div class="invalid-feedback">
             Введите число.
-        </div> 
+        </div>
     }
-    
-    @if (SettingsForm.IsCustom)
+
+    @if (model.IsCustom)
     {
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
@@ -32,10 +33,15 @@
 
 @code{
     [Parameter]
-    public EventCallback<ParameterModelBase> OnDelete { get; set; }
-    
+    public EventCallback<KeyValuePair<string, ParameterBase>> OnDelete { get; set; }
+
     [Parameter]
-    public IntParameterModel SettingsForm { get; set; }
+    public KeyValuePair<string, ParameterBase> SettingsForm { get; set; }
+
+    private IntParameterModel model
+    {
+        get => SettingsForm.Value as IntParameterModel;
+    }
 
     public void ChangeValue(ChangeEventArgs args)
     {
@@ -43,27 +49,27 @@
 
         if (inputValue == string.Empty)
         {
-            if (SettingsForm.IsCustom)
+            if (model.IsCustom)
             {
-                SettingsForm.IsValid = false;
+                model.IsValid = false;
                 return;
             }
-            SettingsForm.Value = SettingsForm.Default;
+            model.Value = model.Default;
         }
         else
         {
             try
             {
-                SettingsForm.Value = int.Parse(inputValue);
+                model.Value = int.Parse(inputValue);
             }
             catch
             {
-                SettingsForm.IsValid = false;
+                model.IsValid = false;
                 return;
             }
         }
 
-        SettingsForm.IsValid = true;
+        model.IsValid = true;
     }
 
 }

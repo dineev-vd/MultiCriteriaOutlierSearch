@@ -1,0 +1,55 @@
+﻿@using OutliersLib
+@using OutliersApp.Models.Parameters
+@using OutliersApp.Models.ParameterModels
+@using OutliersLib.ParameterTypes
+@namespace OutliersApp.Components.Parameters
+
+<div class="input-group" style="margin-top: 8px;">
+    <div class="input-group-prepend">
+        <span class="input-group-text">@model.CoolName </span>
+    </div>
+    <select class="custom-select" @onchange="@OnSelect">
+        <option label="Выберите значение..." disabled></option>
+        @foreach (var option in model.Options)
+        {
+            <option label="@option" selected="@(option == model.Value)">@option</option>
+        }
+    </select>
+    @if (model.IsCustom)
+    {
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
+        </div>
+    }
+</div>
+
+
+@code{
+    [Parameter]
+    public EventCallback<KeyValuePair<string, ParameterBase>> OnDelete { get; set; }
+
+    [Parameter]
+    public KeyValuePair<string, ParameterBase> SettingsForm { get; set; }
+
+    private SelectParameterModel model
+    {
+        get => SettingsForm.Value as SelectParameterModel;
+    }
+
+    public void OnSelect(ChangeEventArgs args)
+    {
+        string inputValue = args.Value.ToString();
+        try
+        {
+            model.Value = inputValue;
+        }
+        catch
+        {
+            model.IsValid = false;
+            return;
+        }
+
+        model.IsValid = true;
+    }
+
+}

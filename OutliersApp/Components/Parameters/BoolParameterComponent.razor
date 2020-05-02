@@ -1,0 +1,49 @@
+﻿@using OutliersLib
+@using OutliersApp.Models.Parameters
+@using OutliersApp.Models.ParameterModels
+@using OutliersLib.ParameterTypes
+@namespace OutliersApp.Components.Parameters
+
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" class="custom-control-input" id="check-@Id" @onchange="OnChange" checked="@SettingsForm.Value">
+    <label class="custom-control-label" for="check-@Id">@model.CoolName </label>
+</div>
+@if (model.IsCustom)
+{
+
+    <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
+}
+
+@*TODO Сделать зависимость id От ID*@
+
+@code
+{
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public EventCallback<KeyValuePair<string, ParameterBase>> OnDelete { get; set; }
+
+    [Parameter]
+    public KeyValuePair<string, ParameterBase> SettingsForm { get; set; }
+
+    private BoolParameterModel model
+    {
+        get => SettingsForm.Value as BoolParameterModel;
+    }
+
+    public void OnChange(ChangeEventArgs args)
+    {
+        string inputValue = args.Value.ToString();
+        try
+        {
+            model.Value = bool.Parse(inputValue);
+        }
+        catch
+        {
+            model.IsValid = false;
+            return;
+        }
+
+        model.IsValid = true;
+    }
+}

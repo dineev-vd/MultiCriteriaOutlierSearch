@@ -21,19 +21,19 @@
     <Content Update="Components\Table.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\Parameters\BoolParameter.razor">
+    <Content Update="Components\Parameters\BoolParameterComponent.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\Parameters\DoubleParameter.razor">
+    <Content Update="Components\Parameters\DoubleParameterComponent.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\Parameters\SelectParameter.razor">
+    <Content Update="Components\Parameters\SelectParameterComponent.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Content Update="Components\ValuesInput.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\Parameters\StringParameter.razor">
+    <Content Update="Components\Parameters\StringParameterComponent.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Content Update="Pages\Algdocs.razor">
@@ -45,7 +45,7 @@
     <Content Update="Pages\FormPage.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\Parameters\IntParameter.razor">
+    <Content Update="Components\Parameters\IntParameterComponent.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>

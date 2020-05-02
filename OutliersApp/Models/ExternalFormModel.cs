@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using OutliersApp.Models.Parameters;
-using OutliersLib;
+﻿using OutliersLib;
+using OutliersLib.ParameterTypes;
+using System.Collections.Generic;
 
 namespace OutliersApp.Models
 {
@@ -8,7 +8,7 @@ namespace OutliersApp.Models
     {
         public string Name { get; set; }
         public string Uri { get; set; }
-        public List<ParameterModelBase> Settings { get; set; }
+        public Dictionary<string, ParameterBase> Settings { get; set; }
 
         public override bool IsValid
         {
@@ -16,7 +16,7 @@ namespace OutliersApp.Models
             {
                 foreach (var item in Settings)
                 {
-                    if (!item.IsValid)
+                    if (!item.Value.IsValid)
                         return false;
                 }
 
@@ -28,7 +28,7 @@ namespace OutliersApp.Models
         {
             Name = string.Empty;
             Uri = string.Empty;
-            Settings = new List<ParameterModelBase>();
+            Settings = new Dictionary<string, ParameterBase>();
         }
 
         public IncomingModuleRequest ToModule()
@@ -46,7 +46,7 @@ namespace OutliersApp.Models
             var result = new Dictionary<string, object>();
             foreach (var setting in Settings)
             {
-                result.Add(setting.Name, setting.Value);
+                result.Add(setting.Key, setting.Value);
             }
 
             return result;

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using OutliersLib;
+﻿using OutliersLib;
+using System.Collections.Generic;
 
 namespace OutliersApp.Models
 {
@@ -54,7 +54,7 @@ namespace OutliersApp.Models
         {
             Algorithms = new List<ModuleFormModel>();
             Combinations = new List<ModuleFormModel>();
-            Values = new double[0,0];
+            Values = new double[0, 0];
         }
 
         public OutlierRequestData ToRequestData()
@@ -64,12 +64,12 @@ namespace OutliersApp.Models
             {
                 requestData.Algorithms.Add(item.GetCurrent());
             }
-            
+
             foreach (var item in Combinations)
             {
                 requestData.Combinations.Add(item.GetCurrent());
             }
-            
+
             requestData.Values = Values;
             return requestData;
         }

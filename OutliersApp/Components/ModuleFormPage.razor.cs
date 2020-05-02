@@ -13,7 +13,7 @@ namespace OutliersApp.Components
 
         //TODO:
         //Сделать анимации появления на переключении внутренний/внешний
-        
+
         public void EnableName(ChangeEventArgs args)
         {
             ModuleFormModel.IsInternal = true;
@@ -26,6 +26,6 @@ namespace OutliersApp.Components
             //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "hide");
         }
 
-        
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using OutliersApp.Models.Parameters;
+﻿using System;
+using OutliersApp.Models.Parameters;
 
 namespace OutliersLib.ParameterTypes
 {
@@ -8,5 +9,9 @@ namespace OutliersLib.ParameterTypes
         public double Max { get; set; }
         public double Default { get; set; }
         public double Value { get; set; }
+        public override string DefaultToString()
+        {
+            return Default.ToString();
+        }
     }
 }
