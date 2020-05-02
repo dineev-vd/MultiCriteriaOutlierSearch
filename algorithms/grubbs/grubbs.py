@@ -1,3 +1,5 @@
+import codecs
+
 from flask import request, jsonify, Flask
 from outliers import smirnov_grubbs as gr
 import json
@@ -35,7 +37,7 @@ def grubbs():
 
 @app.route('/algorithms/grubbs/config/',methods=['GET'])
 def config():
-    with open("config.json") as json_file:
+    with codecs.open("config.json",encoding='utf8') as json_file:
         data = json.load(json_file)
     return jsonify(data)
 

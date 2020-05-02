@@ -9,7 +9,7 @@ namespace OutliersApp.Models.Parameters
         public string Default { get; set; }
         public List<string> Options { get; set; }
 
-        public SelectParameterModel(string name, List<string> options, string def) : base(name)
+        public SelectParameterModel(string name,string coolName, List<string> options, string def) : base(name, coolName)
         {
             Options = options;
             Default = def;

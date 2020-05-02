@@ -1,3 +1,7 @@
 {
-
+    "return_doubles": {
+      "coolName": "Возвращать вероятность",
+      "type": "bool",
+      "default": false
+    }
 }

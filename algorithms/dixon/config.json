@@ -1,13 +1,16 @@
 {
     "left":{
+        "coolName": "Тест на минимум",
         "type":"bool",
         "default":true
     },
     "right":{
+        "coolName": "Тест на максимум",
         "type":"bool",
         "default":true
     },
     "qdict":{
+        "coolName": "Уровень значимости",
         "default": "q99",
         "type":"select",
         "data":[
@@ -15,5 +18,8 @@
             "q95",
             "q99"
         ]
+    },
+    "bool": {
+        
     }
 }

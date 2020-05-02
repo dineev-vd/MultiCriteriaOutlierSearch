@@ -22,31 +22,40 @@
 
 </div>
 
-
+@{ int local = 0; }
 @foreach (var setting in Model.Selected.Settings)
 {
     @if (setting is DoubleParameterModel)
     {
-        <DoubleParameter SettingsForm="@((DoubleParameterModel)setting)"></DoubleParameter>
+        <DoubleParameter SettingsForm="@((DoubleParameterModel) setting)"></DoubleParameter>
     }
 
     @if (setting is SelectParameterModel)
     {
-        <SelectParameter SettingsForm="@((SelectParameterModel)setting)"></SelectParameter>
+        <SelectParameter SettingsForm="@((SelectParameterModel) setting)"></SelectParameter>
     }
 
     @if (setting is BoolParameterModel)
     {
-        <BoolParameter SettingsForm="@((BoolParameterModel)setting)"></BoolParameter>
+        <BoolParameter Id="@(Id + "-i-" + local)" SettingsForm="@((BoolParameterModel) setting)"></BoolParameter>
     }
-    
+
     @if (setting is StringParameterModel)
     {
         <StringParameter SettingsForm="@((StringParameterModel) setting)"></StringParameter>
     }
+    
+    @if (setting is IntParameterModel)
+    {
+        <IntParameter SettingForm="@((IntParameterModel) setting)"></IntParameter>
+    }
+    local++;
 }
 
 @code{
+
+    [Parameter]
+    public string Id { get; set; }
 
     [Parameter]
     public InternalFormModel Model { get; set; }
@@ -57,7 +66,10 @@
         foreach (var internalModule in Model.InternalModulesList)
         {
             if (internalModule.Name == selectedName)
+            {
                 Model.Selected = internalModule;
+                Model.NotSelected = false;
+            }
         }
     }
 

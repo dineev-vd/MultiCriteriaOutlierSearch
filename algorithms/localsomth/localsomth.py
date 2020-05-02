@@ -1,8 +1,10 @@
+import codecs
 import json
 
 from flask import Flask, request, jsonify
 from sklearn.neighbors import LocalOutlierFactor
 import numpy as np
+from sklearn import preprocessing
 
 
 
@@ -15,8 +17,16 @@ def dixon():
         data = np.array(request.json["Data"])
         params = request.json['Params']
 
+        scaler = preprocessing.MinMaxScaler()
         clf = LocalOutlierFactor(n_neighbors=2)
         indices = clf.fit_predict(data)
+        neg = clf.negative_outlier_factor_
+        pos = -1 * neg
+        maxim = max(pos)
+        transformed = pos / float(maxim)
+
+        if params['return_doubles']:
+            indices = transformed
     except Exception as e:
         return jsonify({"message": str(e)}), 400
     return jsonify({"message": "OK", "data": indices.tolist()})
@@ -24,7 +34,7 @@ def dixon():
 
 @app.route('/algorithms/localsomth/config/', methods=['GET'])
 def config():
-    with open("config.json") as json_file:
+    with codecs.open("config.json",encoding='utf8') as json_file:
         data = json.load(json_file)
     return jsonify(data)
 

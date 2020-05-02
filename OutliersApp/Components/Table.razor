@@ -3,10 +3,8 @@
         <thead>
         <tr>
             <th scope="col">#</th>
-            @for (int i = 0; i < valueList.GetLength(1); i++)
-            {
                 <th scope="col">value</th>
-            }
+            
             @foreach (var resp in responses?.AlgResponses)
             {
                 if (resp.Status == 200)
@@ -28,22 +26,24 @@
         {
             <tr>
                 <th scope="row">@(i + 1)</th>
+                <td>
                 @for (int j = 0; j < valueList.GetLength(1); j++)
                 {
-                    <td>@valueList[i, j]</td>
+                    @($"{valueList[i, j]:F3} ")
                 }
+                </td>
                 @foreach (var resp in responses.AlgResponses)
                 {
                     @if (resp.Status == 200)
                     {
-                        <td>@resp.Data[i]</td>
+                        <td>@($"{resp.Data[i]:F3}")</td>
                     }
                 }
                 @foreach (var resp in responses.CombResponses)
                 {
                     @if (resp.Status == 200)
                     {
-                        <td>@resp.Data[i]</td>
+                        <td>@($"{resp.Data[i]}")</td>
                     }
                 }
             </tr>
@@ -53,6 +53,7 @@
 </div>
 
 @namespace OutliersApp.Components
+@using Models
 
 @code
 {
@@ -60,6 +61,6 @@
     public double[,] valueList { get; set; }
 
     [Parameter]
-    public FormPage.Responses responses { get; set; }
+    public Responses responses { get; set; }
 
 }

@@ -16,11 +16,12 @@ namespace OutliersLib
         public List<IncomingModuleRequest> Combinations { get; set; }
         public double[,] Values { get; set; }
 
+
         public OutlierRequestData()
         {
             Algorithms = new List<IncomingModuleRequest>();
             Combinations = new List<IncomingModuleRequest>();
-            Values = new double[0,0];
+            Values = new double[0, 0];
         }
 
         async public Task<List<ModuleResponse>> FetchAlgorithms()
@@ -29,11 +30,6 @@ namespace OutliersLib
             foreach (var alg in Algorithms)
             {
                 var response = await Interaction.GetResponse(alg, Values);
-                if (alg.Weight != 1)
-                {
-                    response.Data = new List<double>(response.Data.Select(x => x * alg.Weight));
-                }
-
                 responseList.Add(response);
             }
 
@@ -43,22 +39,24 @@ namespace OutliersLib
         async public Task<List<ModuleResponse>> FetchCombinations(
             List<ModuleResponse> algResponses)
         {
-            var weightsList = new List<List<double>>();
+            var values = new List<List<double>>();
+            var weights = new List<double>();
             // Алгоритмы, вернувшие ошибку отбрасываются
-            foreach (var resp in algResponses)
+            for (int i = 0; i < algResponses.Count; i++)
             {
-                if (resp.Status != (int)HttpStatusCode.OK)
+                if (algResponses[i].Status != (int) HttpStatusCode.OK)
                 {
                     continue;
                 }
 
-                weightsList.Add(resp.Data);
+                weights.Add(Algorithms[i].Weight);
+                values.Add(algResponses[i].Data);
             }
 
             var responseList = new List<ModuleResponse>();
             foreach (var comb in Combinations)
             {
-                responseList.Add(await Interaction.GetResponse(comb, weightsList));
+                responseList.Add(await Interaction.GetResponse(comb, new {values, weights}));
             }
 
             return responseList;

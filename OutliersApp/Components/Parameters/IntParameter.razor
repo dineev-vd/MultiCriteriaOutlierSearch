@@ -23,7 +23,7 @@
     @if (SettingsForm.IsCustom)
     {
         <div class="input-group-append">
-             <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
+            <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
         </div>
     }
 </div>
@@ -34,7 +34,7 @@
     public EventCallback<ParameterModelBase> OnDelete { get; set; }
     
     [Parameter]
-    public DoubleParameterModel SettingsForm { get; set; }
+    public IntParameterModel SettingsForm { get; set; }
 
     public void ChangeValue(ChangeEventArgs args)
     {
@@ -53,7 +53,7 @@
         {
             try
             {
-                SettingsForm.Value = double.Parse(inputValue);
+                SettingsForm.Value = int.Parse(inputValue);
             }
             catch
             {

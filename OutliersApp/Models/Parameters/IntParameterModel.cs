@@ -2,16 +2,17 @@
 
 namespace OutliersApp.Models.Parameters
 {
-    public class DoubleParameterModel : ParameterModelBase
+    public class IntParameterModel : ParameterModelBase
     {
-        double _value;
-        public override int Id { get; set; } = 1;
-        public double Min { get; set; }
-        public double Max { get; set; }
-        public double Default { get; set; }
-        public double Value
+        int _value;
+        public override int Id { get; set; } = 5;
+        public int Min { get; set; }
+        public int Max { get; set; }
+        public int Default { get; set; }
+
+        public int Value
         {
-            get { return _value;}
+            get => _value;
             set
             {
                 if (!(Min <= value && value <= Max) && !IsCustom)
@@ -23,7 +24,7 @@ namespace OutliersApp.Models.Parameters
             }
         }
 
-        public DoubleParameterModel(string name,string coolName, double min, double max, double def) : base(name, coolName)
+        public IntParameterModel(string name,string coolName, int min, int max, int def) : base(name, coolName)
         {
             Min = min;
             Max = max;
@@ -32,7 +33,7 @@ namespace OutliersApp.Models.Parameters
             IsCustom = false;
         }
 
-        public DoubleParameterModel(string name, string coolName) : base(name, coolName)
+        public IntParameterModel(string name, string coolName) : base(name, coolName)
         {
             IsCustom = true;
         }

@@ -6,14 +6,14 @@
         public string Default { get; set; }
         public string Value { get; set; }
 
-        public StringParameterModel(string name, string def) : base(name)
+        public StringParameterModel(string name,string coolName, string def) : base(name, coolName)
         {
             Default = def;
             Value = Default;
             IsCustom = false;
         }
 
-        public StringParameterModel(string name) : base(name)
+        public StringParameterModel(string name, string coolName) : base(name, coolName)
         {
             Default = string.Empty;
             Value = Default;

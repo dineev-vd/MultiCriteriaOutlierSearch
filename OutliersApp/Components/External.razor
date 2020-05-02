@@ -33,6 +33,7 @@
     </div>
 </div>
 
+@{ int local = 0;}
 @foreach (var setting in Model.Settings)
 {
     @if (setting is DoubleParameterModel)
@@ -47,16 +48,19 @@
 
     @if (setting is BoolParameterModel)
     {
-        <BoolParameter SettingsForm="@((BoolParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></BoolParameter>
+        <BoolParameter Id="@(Id+"-e-"+local)" SettingsForm="@((BoolParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></BoolParameter>
     }
     
     @if (setting is StringParameterModel)
     {
         <StringParameter SettingsForm="@((StringParameterModel) setting)" OnDelete="@(e => Model.Settings.Remove(e))"></StringParameter>
     }
+    local++;
 }
 
 @code{
+    [Parameter]
+    public string Id { get; set; }
 
     [Parameter]
     public ExternalFormModel Model { get; set; }
@@ -90,17 +94,17 @@
         
         if (Selected == "double")
         {
-            Model.Settings.Add(new DoubleParameterModel(CustomName));
+            Model.Settings.Add(new DoubleParameterModel(CustomName, CustomName));
         }
 
         if (Selected == "bool")
         {
-            Model.Settings.Add(new BoolParameterModel(CustomName));
+            Model.Settings.Add(new BoolParameterModel(CustomName, CustomName));
         }
 
         if (Selected == "string")
         {
-            Model.Settings.Add(new StringParameterModel(CustomName));
+            Model.Settings.Add(new StringParameterModel(CustomName, CustomName));
         }
         
         Model.Settings.Sort();

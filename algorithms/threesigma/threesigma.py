@@ -1,3 +1,6 @@
+import codecs
+import json
+
 from flask import Flask, request, jsonify
 import numpy as np
 
@@ -23,6 +26,12 @@ def threesigma(path):
         a = [0 for i in range(0,len(data))]
         for i in indices:
             a[i] = 1
-    except:
-        return jsonify("error:threesigma"), 400
-    return jsonify(a)
+    except Exception as e:
+        return jsonify({"message":str(e)}), 400
+    return jsonify({"data":a,"message":"OK"})
+
+@app.route('/algorithms/threesigma/config/', methods=['GET'])
+def config():
+    with codecs.open("config.json",encoding='utf8') as json_file:
+        data = json.load(json_file)
+    return jsonify(data)

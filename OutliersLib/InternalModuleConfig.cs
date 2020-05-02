@@ -17,4 +17,5 @@ namespace OutliersLib
             Parameters = new Dictionary<string, Parameter>();
         }
     }
+    
 }

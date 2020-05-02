@@ -8,8 +8,9 @@ using Newtonsoft.Json;
 using OutliersApp.Models;
 using OutliersLib;
 using Utils = OutliersApp.Models.Utils;
+using OutliersApp.Components;
 
-namespace OutliersApp.Components
+namespace OutliersApp.Pages
 {
     public partial class FormPage
     {
@@ -17,9 +18,7 @@ namespace OutliersApp.Components
         Config Config { get; set; }
         string str { get; set; }
         string req { get; set; }
-        string values { get; set; } = "";
         Responses responses { get; set; }
-        bool TextValid { get; set; }
         bool IsValid { get; set; }
         bool IsLoading { get; set; }
         bool ConfigNotLoaded { get; set; }
@@ -44,6 +43,11 @@ namespace OutliersApp.Components
                 ConfigNotLoaded = true;
             }
 
+            if (Config is null)
+            {
+                Config = new Config();
+            }
+            
             PredefinedAlgorithms = Utils.ConvertConfig(Config.Algorithms);
             PredefinedCombinations = Utils.ConvertConfig(Config.Combinations);
             await base.OnInitializedAsync();
@@ -56,7 +60,6 @@ namespace OutliersApp.Components
             var response = await client.SendAsync(request);
             Config = JsonConvert.DeserializeObject<Config>(await response.Content.ReadAsStringAsync(),
                 new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
-            StateHasChanged();
         }
 
         public void OnClick()
@@ -94,7 +97,7 @@ namespace OutliersApp.Components
                 StateHasChanged();
                 return;
             }
-
+            
             IsLoading = false;
             StateHasChanged();
         }
@@ -127,17 +130,6 @@ namespace OutliersApp.Components
             StateHasChanged();
         }
 
-        [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-        public class Responses
-        {
-            public List<ModuleResponse> AlgResponses { get; set; }
-            public List<ModuleResponse> CombResponses { get; set; }
-
-            public Responses()
-            {
-                AlgResponses = new List<ModuleResponse>();
-                CombResponses = new List<ModuleResponse>();
-            }
-        }
+        
     }
 }

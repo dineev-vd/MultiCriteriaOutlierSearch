@@ -3,8 +3,8 @@
 @namespace OutliersApp.Components
 
 <div class="custom-control custom-checkbox">
-    <input type="checkbox" class="custom-control-input" id="customControlValidation1" @onchange="OnChange" checked="@SettingsForm.Value">
-    <label class="custom-control-label" for="customControlValidation1">@SettingsForm.Name</label>
+    <input type="checkbox" class="custom-control-input" id="check-@Id"  @onchange="OnChange" checked="@SettingsForm.Value">
+    <label class="custom-control-label" for="check-@Id">@SettingsForm.CoolName</label>
 </div>
 @if (SettingsForm.IsCustom)
     {
@@ -16,6 +16,8 @@
 
 @code
 {
+    [Parameter]
+    public string Id { get; set; }
     [Parameter]
     public EventCallback<ParameterModelBase> OnDelete { get; set; }
     

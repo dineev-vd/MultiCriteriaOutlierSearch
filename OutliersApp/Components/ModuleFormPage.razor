@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col">
                     <h5 class="mb-0">
-                        <button type="button" class="btn btn-link" @onclick=@Toggle>Линк</button>
+                        <button type="button" class="btn btn-link" @onclick=@Toggle>@(ModuleFormModel.IsShown ? "Свернуть":"Развернуть")</button>
                     </h5>
                 </div>
                 @if (HasWeight)
@@ -43,11 +43,11 @@
                 @*Переключатель для внутренний/внешний*@
                 @if (ModuleFormModel.IsInternal)
                 {
-                    <Internal Model=@ModuleFormModel.Internal></Internal>
+                    <Internal Id="@Id" Model=@ModuleFormModel.Internal></Internal>
                 }
                 else
                 {
-                    <External Model=@ModuleFormModel.External></External>
+                    <External Id="@Id" Model=@ModuleFormModel.External></External>
                 }
             </div>
         </div>

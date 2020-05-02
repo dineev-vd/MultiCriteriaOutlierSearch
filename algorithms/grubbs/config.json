@@ -6,6 +6,7 @@
         "default":0.01
     },
     "method":{
+        "coolName": "Метод",
         "type":"select",
         "data":[
             "double_sided",

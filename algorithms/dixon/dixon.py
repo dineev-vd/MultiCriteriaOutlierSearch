@@ -1,6 +1,7 @@
-from flask import request, jsonify, Flask
+from flask import request, jsonify, Flask, Response
 import json
 import numpy as np
+import codecs
 
 q90 = [0.941, 0.765, 0.642, 0.56, 0.507, 0.468, 0.437,
        0.412, 0.392, 0.376, 0.361, 0.349, 0.338, 0.329,
@@ -80,6 +81,7 @@ def dixon_test(data, left=True, right=True, q_dict=Q95):
     return outliers
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
 
 @app.route('/algorithms/dixon/', methods=['POST'])
 def dixon():
@@ -113,9 +115,9 @@ def dixon():
 
 @app.route('/algorithms/dixon/config/',methods=['GET'])
 def config():
-    with open("config.json") as json_file:
-        data = json.load(json_file)
-    return jsonify(data)
+    with open("config.json", encoding='utf8') as json_file:
+        data = json.load(json_file, encoding='utf8')
+    return Response(json.dumps(data, ensure_ascii=False), content_type='application/json; charset=utf-8')
 
 if __name__ == "__main__":
     app.run(debug=True,port=7000)

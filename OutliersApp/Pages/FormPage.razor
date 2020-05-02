@@ -1,4 +1,7 @@
-﻿@if (ConfigNotLoaded)
+﻿@page "/"
+
+<div class="container bg-light border rounded p-3 shadow">
+@if (ConfigNotLoaded)
 {
     <div class="container mb-4 border border-danger rounded p-3">
         Не удалось загрузить Config.
@@ -92,10 +95,8 @@
 
 <Table valueList="@UserInstance.Values" responses="@responses"></Table>
 
+</div>
 @*TODO Проверка на корректность формы
 *@
 
-@using Newtonsoft.Json
-@using OutliersLib
 @inject IJSRuntime IJSRuntime
-@namespace OutliersApp.Components

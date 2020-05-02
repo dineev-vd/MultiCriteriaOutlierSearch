@@ -9,5 +9,6 @@ namespace OutliersLib
         public double Max { get; set; }
         public object Default { get; set; }
         public List<string> Data { get; set; }
+        public string CoolName { get; set; }
     }
 }

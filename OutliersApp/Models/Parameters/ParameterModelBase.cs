@@ -29,6 +29,11 @@ namespace OutliersApp.Models.Parameters
                 {
                     return ((StringParameterModel) this).Value;
                 }
+                
+                if (this is IntParameterModel)
+                {
+                    return ((IntParameterModel) this).Value;
+                }
 
                 throw new NotImplementedException($"This type of parameter ({this.GetType().Name}) is not supported");
             }
@@ -37,10 +42,12 @@ namespace OutliersApp.Models.Parameters
         public bool IsValid { get; set; }
         public bool IsCustom { get; set; }
         public string Name { get; set; }
+        public string CoolName { get; set; }
 
-        public ParameterModelBase(string name)
+        public ParameterModelBase(string name, string coolName)
         {
             Name = name;
+            CoolName = coolName;
             IsValid = true;
         }
 
@@ -49,19 +56,31 @@ namespace OutliersApp.Models.Parameters
             if (this is DoubleParameterModel)
             {
                 var current = this as DoubleParameterModel;
-                return new DoubleParameterModel(current.Name, current.Min, current.Max, current.Default);
+                return new DoubleParameterModel(current.Name,current.CoolName, current.Min, current.Max, current.Default);
             }
 
             if (this is SelectParameterModel)
             {
                 var current = this as SelectParameterModel;
-                return new SelectParameterModel(current.Name, current.Options, current.Default);
+                return new SelectParameterModel(current.Name, current.CoolName,current.Options, current.Default);
             }
 
             if (this is BoolParameterModel)
             {
                 var current = this as BoolParameterModel;
-                return new BoolParameterModel(current.Name, current.Default);
+                return new BoolParameterModel(current.Name, current.CoolName,current.Default);
+            }
+
+            if (this is StringParameterModel)
+            {
+                var current = this as StringParameterModel;
+                return new StringParameterModel(current.Name, current.CoolName, current.Default);
+            }
+
+            if (this is IntParameterModel)
+            {
+                var current = this as IntParameterModel;
+                return new IntParameterModel(current.Name, current.CoolName, current.Min, current.Max, current.Default);
             }
             
             throw new NotImplementedException($"Type {this.GetType()} cloning is not supported");

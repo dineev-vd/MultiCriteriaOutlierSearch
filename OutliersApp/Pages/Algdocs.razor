@@ -1,6 +1,7 @@
 ﻿@page "/algdocs"
 @using Newtonsoft.Json
 @using OutliersLib
+@using System.IO
 
 <div class="container bg-light border rounded shadow p-3">
     @if (ConfigNotLoaded)
@@ -13,6 +14,8 @@
     {
         <div class="container border rounded mb-3 p-3">
             <h2>@(alg.Value.CoolName)</h2><span class="badge badge-secondary">id:"@alg.Key"</span>
+            <h5>Описание: </h5>
+            <p>@(GetDocs(alg.Key))</p>
             <h5>Параметры@(alg.Value.Parameters.Count == 0 ? " отсутствуют." : ":")</h5>
 
             @foreach (var param in alg.Value.Parameters)
@@ -60,6 +63,12 @@
         {
             ConfigNotLoaded = true;
         }
+
+        if (Config is null)
+        {
+            Config = new Config();
+        }
+        
         await base.OnInitializedAsync();
     }
 
@@ -70,7 +79,17 @@
         var response = await client.SendAsync(request);
         Config = JsonConvert.DeserializeObject<Config>(await response.Content.ReadAsStringAsync(),
             new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
-        StateHasChanged();
     }
 
+    public string GetDocs(string key)
+    {
+        try
+        {
+            return File.ReadAllText("Docs/Algorithms/" + key + ".txt");
+        }
+        catch
+        {
+            return "отсутствует.";
+        }
+    }
 }
