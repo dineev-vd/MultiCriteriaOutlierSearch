@@ -9,48 +9,45 @@ namespace OutliersLib.ParameterTypes
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Parameters : IEnumerable<KeyValuePair<string, ParameterBase>>
     {
-        [JsonProperty("bool")] public Dictionary<string, BoolParameter> BoolParameters { get; set; }
-        [JsonProperty("int")] public Dictionary<string, IntParameter> IntParameters { get; set; }
-        [JsonProperty("double")] public Dictionary<string, DoubleParameter> DoubleParameters { get; set; }
-        [JsonProperty("string")] public Dictionary<string, StringParameter> StringParameters { get; set; }
-        [JsonProperty("select")] public Dictionary<string, SelectParameter> SelectParameters { get; set; }
-
-        public Parameters()
-        {
-            BoolParameters = new Dictionary<string, BoolParameter>();
-            IntParameters = new Dictionary<string, IntParameter>();
-            DoubleParameters = new Dictionary<string, DoubleParameter>();
-            StringParameters = new Dictionary<string, StringParameter>();
-            SelectParameters = new Dictionary<string, SelectParameter>();
-        }
+        [JsonProperty("bool")] public Dictionary<string, BoolParameterModel> BoolParameters { get; set; }
+        [JsonProperty("int")] public Dictionary<string, IntParameterModel> IntParameters { get; set; }
+        [JsonProperty("double")] public Dictionary<string, DoubleParameterModel> DoubleParameters { get; set; }
+        [JsonProperty("string")] public Dictionary<string, StringParameterModel> StringParameters { get; set; }
+        [JsonProperty("select")] public Dictionary<string, SelectParameterModel> SelectParameters { get; set; }
 
 
-        public IEnumerator<KeyValuePair<string,ParameterBase>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, ParameterBase>> GetEnumerator()
         {
             var dict = new Dictionary<string, ParameterBase>();
-            foreach (var parameter in BoolParameters)
+
+            foreach (var parameter in BoolParameters ??= new Dictionary<string, BoolParameterModel>())
             {
-                dict.Add(parameter.Key, parameter.Value);
+                if (!(parameter.Value is null))
+                    dict.Add(parameter.Key, parameter.Value);
             }
 
-            foreach (var parameter in IntParameters)
+            foreach (var parameter in IntParameters ??= new Dictionary<string, IntParameterModel>())
             {
-                dict.Add(parameter.Key,parameter.Value);
+                if (!(parameter.Value is null))
+                    dict.Add(parameter.Key, parameter.Value);
             }
 
-            foreach (var parameter in DoubleParameters)
+            foreach (var parameter in DoubleParameters ??= new Dictionary<string, DoubleParameterModel>())
             {
-                dict.Add(parameter.Key, parameter.Value);
+                if (!(parameter.Value is null))
+                    dict.Add(parameter.Key, parameter.Value);
             }
 
-            foreach (var parameter in StringParameters)
+            foreach (var parameter in StringParameters ??= new Dictionary<string, StringParameterModel>())
             {
-                dict.Add(parameter.Key,parameter.Value);
+                if (!(parameter.Value is null))
+                    dict.Add(parameter.Key, parameter.Value);
             }
 
-            foreach (var parameter in SelectParameters)
+            foreach (var parameter in SelectParameters ??= new Dictionary<string, SelectParameterModel>())
             {
-                dict.Add(parameter.Key,parameter.Value);
+                if (!(parameter.Value is null))
+                    dict.Add(parameter.Key, parameter.Value);
             }
 
             return dict.GetEnumerator();
@@ -61,6 +58,7 @@ namespace OutliersLib.ParameterTypes
             return GetEnumerator();
         }
 
+        [JsonIgnore]
         public int Count
         {
             get

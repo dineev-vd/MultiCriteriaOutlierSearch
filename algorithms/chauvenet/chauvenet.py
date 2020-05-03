@@ -59,7 +59,7 @@ def dixon():
     try:
         data = np.array(request.json["Data"])
         if data.shape != (len(data), 1):
-            raise Exception("Размерность данных больше 1")
+            raise Exception("Критерий Шовене не поддерживает размерность данных большую, чем 1")
 
         data = data.reshape(1, -1).flatten()
         params = request.json['Params']

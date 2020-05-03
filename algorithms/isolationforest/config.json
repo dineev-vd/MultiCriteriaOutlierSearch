@@ -1,8 +1,21 @@
 {
     "Bool": {
       "ReturnDoubles":{
-	  
+	    "CoolName": "Возвращать вероятности",
+        "Default": true
 	  }
+    },
+  "int": {
+    "n_estimators": {
+      "CoolName": "N-Estimators",
+      "Default": 2,
+      "Min": 0
+    },
+    "max_samples": {
+      "CoolName": "Max Samples",
+      "Default": 2,
+      "Min": 0
     }
+  }
 	
 }

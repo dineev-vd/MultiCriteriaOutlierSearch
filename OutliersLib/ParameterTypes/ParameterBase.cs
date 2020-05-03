@@ -3,16 +3,30 @@ using Newtonsoft.Json;
 
 namespace OutliersLib.ParameterTypes
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public abstract class ParameterBase : ICloneable
     {
-        public virtual bool IsValid { get; set; }
-        public  bool IsCustom { get; set; }
+        [JsonIgnore] public bool IsValid { get; set; }
+        [JsonIgnore] public bool IsCustom { get; set; }
+        [JsonIgnore] public string ErrorMessage { get; set; }
+        public string FullName { get; set; }
+        
+        [JsonIgnore]
+        public string StringValue { get; set; }
+        
         public abstract string DefaultToString();
-        public string CoolName { get; set; }
-        // public abstract object Value { get; set; }
-        public object Clone()
+        public abstract void SetValue(string input);
+
+        public ParameterBase()
         {
-            throw new NotImplementedException();
+            FullName = string.Empty;
+            ErrorMessage = string.Empty;
+            StringValue = string.Empty;
+            IsValid = true;
         }
+
+
+        // public abstract object Value { get; set; }
+        public abstract object Clone();
     }
 }

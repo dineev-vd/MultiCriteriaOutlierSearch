@@ -3,7 +3,6 @@
 @using OutliersApp.Models.Parameters
 @using System.Linq
 @using OutliersApp.Components.Parameters
-@using OutliersApp.Models.ParameterModels
 @using OutliersLib.ParameterTypes
 @using Microsoft.AspNetCore.Components.Web
 @namespace OutliersApp.Components
@@ -91,22 +90,22 @@
 
         if (Selected == "double")
         {
-            Model.Settings.Add(CustomName, new DoubleParameterModel(CustomName));
+            Model.Settings.Add(CustomName, new DoubleParameterModel{IsCustom = true});
         }
 
         if (Selected == "bool")
         {
-            Model.Settings.Add(CustomName, new BoolParameterModel(CustomName));
+            Model.Settings.Add(CustomName, new BoolParameterModel{IsCustom = true});
         }
 
         if (Selected == "string")
         {
-            Model.Settings.Add(CustomName, new StringParameterModel(CustomName));
+            Model.Settings.Add(CustomName, new StringParameterModel{IsCustom = true});
         }
 
         if (Selected == "int")
         {
-            Model.Settings.Add(CustomName, new IntParameterModel(CustomName));
+            Model.Settings.Add(CustomName, new IntParameterModel{IsCustom = true});
         }
     }
 

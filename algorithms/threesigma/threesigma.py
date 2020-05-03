@@ -12,7 +12,7 @@ def threesigma(path):
     try:
         data = np.array(request.json["Data"])
         if data.shape != (len(data), 1):
-            raise Exception
+            raise Exception("Критерий трёх сигм не поддерживает размерность данных большую, чем 1")
 
         data = data.reshape(1, -1).flatten()
         print(data)

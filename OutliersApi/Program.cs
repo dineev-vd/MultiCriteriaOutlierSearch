@@ -16,15 +16,6 @@ namespace outliers_api
     {
         public static void Main(string[] args)
         {
-            try
-            {
-                Utils.Read();
-            }
-            catch
-            {
-                // лог: не удалось прочитать конфиг
-            }
-
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ru-RU");
             CreateHostBuilder(args).Build().Run();
         }

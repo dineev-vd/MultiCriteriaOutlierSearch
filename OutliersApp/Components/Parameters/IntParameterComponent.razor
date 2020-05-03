@@ -1,28 +1,18 @@
-﻿@using OutliersLib
-@using OutliersApp.Models.Parameters
-@using OutliersApp.Models.ParameterModels
+﻿@using OutliersApp.Models.Parameters
 @using OutliersLib.ParameterTypes
 @namespace OutliersApp.Components.Parameters
 
 <div class="input-group" style="margin-bottom: 8px;">
     <div class="input-group-prepend">
-        <span class="input-group-text">@model.CoolName </span>
+        <span class="input-group-text">@(FormAsInt.FullName == string.Empty ? SettingsForm.Key : FormAsInt.FullName) </span>
     </div>
-    <input type="text" placeholder="значение_по_умолчанию=@model.Default" class="form-control @(model.IsValid ? "" : "is-invalid")" @oninput=@(ChangeValue) required />
-    @if (!model.IsCustom)
-    {
-        <div class="invalid-feedback">
-            Введите число в промежутке от @model.Min до @model.Max.
-        </div>
-    }
-    else
-    {
-        <div class="invalid-feedback">
-            Введите число.
-        </div>
-    }
+    <input type="text" placeholder="значение_по_умолчанию=@FormAsInt.Default" value="@FormAsInt.StringValue" class="form-control @(FormAsInt.IsValid ? "" : "is-invalid")" @oninput=@(e => FormAsInt.SetValue(e.Value.ToString())) required/>
+    <div class="invalid-feedback">
+        @FormAsInt.ErrorMessage
+    </div>
 
-    @if (model.IsCustom)
+
+    @if (FormAsInt.IsCustom)
     {
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" @onclick=@(async e => await OnDelete.InvokeAsync(SettingsForm))>Удалить</button>
@@ -32,44 +22,16 @@
 
 
 @code{
+
     [Parameter]
     public EventCallback<KeyValuePair<string, ParameterBase>> OnDelete { get; set; }
 
     [Parameter]
     public KeyValuePair<string, ParameterBase> SettingsForm { get; set; }
 
-    private IntParameterModel model
+    private IntParameterModel FormAsInt
     {
         get => SettingsForm.Value as IntParameterModel;
-    }
-
-    public void ChangeValue(ChangeEventArgs args)
-    {
-        string inputValue = args.Value.ToString();
-
-        if (inputValue == string.Empty)
-        {
-            if (model.IsCustom)
-            {
-                model.IsValid = false;
-                return;
-            }
-            model.Value = model.Default;
-        }
-        else
-        {
-            try
-            {
-                model.Value = int.Parse(inputValue);
-            }
-            catch
-            {
-                model.IsValid = false;
-                return;
-            }
-        }
-
-        model.IsValid = true;
     }
 
 }

@@ -9,7 +9,7 @@ namespace OutliersApp.Models
         {
             get
             {
-                BaseFormModel current = IsInternal ? (BaseFormModel)Internal : (BaseFormModel)External;
+                BaseFormModel current = IsInternal ? Internal : (BaseFormModel)External;
                 if (!current.IsValid)
                 {
                     return false;

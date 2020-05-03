@@ -1,25 +1,23 @@
 {
-    "left":{
-        "coolName": "Тест на минимум",
-        "type":"bool",
-        "default":true
-    },
-    "right":{
-        "coolName": "Тест на максимум",
-        "type":"bool",
-        "default":true
-    },
-    "qdict":{
-        "coolName": "Уровень значимости",
-        "default": "q99",
-        "type":"select",
-        "data":[
-            "q90",
-            "q95",
-            "q99"
-        ]
+    "select":{
+        "qdict":{
+            "fullname": "Уровень значимости",
+            "default": "q99",
+            "options":[
+                "q90",
+                "q95",
+                "q99"
+            ]
+        }
     },
     "bool": {
-
+            "left":{
+            "fullname": "Тест на минимум",
+            "default":true
+        },
+        "right":{
+            "fullname": "Тест на максимум",
+            "default":true
+        }
     }
 }

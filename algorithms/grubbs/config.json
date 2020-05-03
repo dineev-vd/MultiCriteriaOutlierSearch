@@ -1,17 +1,21 @@
 {
-    "alpha":{
-        "type":"double",
-        "min":0.01,
-        "max":1,
-        "default":0.01
-    },
-    "method":{
-        "coolName": "Метод",
-        "type":"select",
-        "data":[
-            "double_sided",
-            "left_sided",
-            "right_sided"
-        ]
+  "double": {
+    "alpha": {
+      "type": "double",
+      "min": 0.01,
+      "max": 1,
+      "default": 0.01
     }
+  },
+  "select": {
+    "method": {
+      "coolName": "Метод",
+      "type": "select",
+      "options": [
+        "double_sided",
+        "left_sided",
+        "right_sided"
+      ]
+    }
+  }
 }

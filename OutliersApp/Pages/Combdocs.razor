@@ -26,12 +26,12 @@
                 <p>@param.Key :</p>
                 <ul>
                     <li>Тип: @param.Value.GetType().Name</li>
-                    @if (param.Value is DoubleParameter doubleParameter)
+                    @if (param.Value is DoubleParameterModel doubleParameter)
                     {
                         <li>Мин. значение: @doubleParameter.Min</li>
                         <li>Макс. значение: @doubleParameter.Max</li>
                     }
-                    @if (param.Value is IntParameter intParameter)
+                    @if (param.Value is IntParameterModel intParameter)
                     {
                         <li>Мин. значение: @intParameter.Min</li>
                         <li>Макс. значение: @intParameter.Max</li>
@@ -40,11 +40,11 @@
                     {
                         <li>Значение по умолчанию: @param.Value.DefaultToString()</li>
                     }
-                    @if (param.Value is SelectParameter && !((param.Value as SelectParameter).Options is null))
+                    @if (param.Value is SelectParameterModel && !((param.Value as SelectParameterModel).Options is null))
                     {
                         <div>Опции для выбора:</div>
                         <ul>
-                            @foreach (var item in (param.Value as SelectParameter).Options)
+                            @foreach (var item in (param.Value as SelectParameterModel).Options)
                             {
                                 <li>@item</li>
                             }

@@ -15,6 +15,7 @@ namespace OutliersApp.Models
             var result = new Dictionary<string, ParameterBase>();
             foreach (var parameter in configParameters)
             {
+                if (parameter.Value is null) continue;
                 result.Add(parameter.Key, parameter.Value);
             }
 

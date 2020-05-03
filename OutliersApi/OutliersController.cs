@@ -40,6 +40,7 @@ namespace outliers_api
         [HttpGet]
         public IActionResult Get()
         {
+            Utils.Read();
             return Ok(Utils.Config);
         }
     }

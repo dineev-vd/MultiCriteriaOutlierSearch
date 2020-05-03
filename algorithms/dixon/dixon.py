@@ -88,11 +88,13 @@ def dixon():
     try:
         data = np.array(request.json["Data"])
         if data.shape != (len(data), 1):
-            raise Exception("Размерность данных больше 1")
+            raise Exception("Критерий Диксона не поддерживает размерность данных большую, чем 1")
 
         data = data.reshape(1, -1).flatten()
         params = request.json['Params']
-        
+
+        qdict = Q99
+
         if params['qdict'] == 'q90':
             qdict = Q90
 
@@ -109,15 +111,19 @@ def dixon():
                 continue
             for i in [j for j, x in enumerate(data) if x == outlier]:
                 indices[i] = 1
+        return jsonify({"message": "OK", "data": indices})
     except Exception as e:
         return jsonify({"message":str(e)}), 400
-    return jsonify({"message":"OK","data":indices})
+
 
 @app.route('/algorithms/dixon/config/',methods=['GET'])
 def config():
-    with open("config.json", encoding='utf8') as json_file:
-        data = json.load(json_file, encoding='utf8')
-    return Response(json.dumps(data, ensure_ascii=False), content_type='application/json; charset=utf-8')
+    try:
+        with open("config.json", encoding='utf8') as json_file:
+            data = json.load(json_file, encoding='utf8')
+            return Response(json.dumps(data, ensure_ascii=False), content_type='application/json; charset=utf-8')
+    except Exception as e:
+        return jsonify({"Ошибка при чтении файла конфигурации"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True,port=7000)
