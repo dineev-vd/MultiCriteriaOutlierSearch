@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using OutliersLib.ParameterTypes;
 
-namespace OutliersApp.Models.Parameters
+namespace OutliersLib.ParameterTypes
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class IntParameterModel : ParameterBase
@@ -35,6 +35,7 @@ namespace OutliersApp.Models.Parameters
             }
         }
 
+        [JsonIgnore]
         public int Value
         {
             get => _value;
@@ -52,14 +53,11 @@ namespace OutliersApp.Models.Parameters
         public IntParameterModel()
         {
             Min = int.MinValue;
-            Max = int.MinValue;
+            Max = int.MaxValue;
             Default = 0;
         }
 
-        public override string DefaultToString()
-        {
-            return Default.ToString();
-        }
+       
 
         public override void SetValue(string input)
         {
@@ -77,10 +75,25 @@ namespace OutliersApp.Models.Parameters
                 Value = int.Parse(input);
                 IsValid = true;
             }
-            catch (Exception e)
+            catch (ArgumentNullException)
             {
                 IsValid = false;
-                ErrorMessage = e.Message;
+                ErrorMessage = "Введите непустое значение";
+            }
+            catch (FormatException)
+            {
+                IsValid = false;
+                ErrorMessage = "Введенное значение имеет неверный формат";
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                IsValid = false;
+                ErrorMessage = $"Введите значение в интервале от {Min} до {Max}";
+            }
+            catch (OverflowException)
+            {
+                IsValid = false;
+                ErrorMessage = "Введенное значение выходит за пределы типа Int";
             }
         }
 
@@ -98,6 +111,11 @@ namespace OutliersApp.Models.Parameters
                 ErrorMessage = this.ErrorMessage,
                 FullName = this.FullName
             };
+        }
+
+        public override object GetValue()
+        {
+            return Value;
         }
     }
 }

@@ -16,6 +16,7 @@ namespace outliers_api
     {
         public static void Main(string[] args)
         {
+            Utils.Read();
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ru-RU");
             CreateHostBuilder(args).Build().Run();
         }

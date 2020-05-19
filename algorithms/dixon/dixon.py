@@ -1,7 +1,6 @@
 from flask import request, jsonify, Flask, Response
 import json
 import numpy as np
-import codecs
 
 q90 = [0.941, 0.765, 0.642, 0.56, 0.507, 0.468, 0.437,
        0.412, 0.392, 0.376, 0.361, 0.349, 0.338, 0.329,
@@ -26,23 +25,7 @@ Q95 = {n:q for n,q in zip(range(3,len(q95)+1), q95)}
 Q99 = {n:q for n,q in zip(range(3,len(q99)+1), q99)}
 
 def dixon_test(data, left=True, right=True, q_dict=Q95):
-    """
-    Keyword arguments:
-        data = A ordered or unordered list of data points (int or float).
-        left = Q-test of minimum value in the ordered list if True.
-        right = Q-test of maximum value in the ordered list if True.
-        q_dict = A dictionary of Q-values for a given confidence level,
-            where the dict. keys are sample sizes N, and the associated values
-            are the corresponding critical Q values. E.g.,
-            {3: 0.97, 4: 0.829, 5: 0.71, 6: 0.625, ...}
 
-    Returns a list of 2 values for the outliers, or None.
-    E.g.,
-       for [1,1,1] -> [None, None]
-       for [5,1,1] -> [None, 5]
-       for [5,1,5] -> [1, None]
-
-    """
     assert(left or right), 'Хотя бы один из тестов мин или макс должен присутствовать'
     assert(len(data) >= 3), 'Нужно хотя бы 3 значения'
     assert(len(data) <= max(q_dict.keys())), 'Размер выборки слишком большой'

@@ -34,6 +34,7 @@ namespace OutliersApp
             {
                 app.UseExceptionHandler("/Error");
             }
+            
 
             app.UseStaticFiles();
 

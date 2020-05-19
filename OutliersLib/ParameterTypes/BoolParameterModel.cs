@@ -1,6 +1,5 @@
 ﻿using System;
 using Newtonsoft.Json;
-using OutliersApp.Models.Parameters;
 
 namespace OutliersLib.ParameterTypes
 {
@@ -19,16 +18,14 @@ namespace OutliersLib.ParameterTypes
             }
         }
 
+        [JsonIgnore]
         public bool Value { get; set; }
 
         public BoolParameterModel()
         {
             Default = true;
         }
-        public override string DefaultToString()
-        {
-            return Default.ToString();
-        }
+      
 
         public override void SetValue(string input)
         {
@@ -40,16 +37,21 @@ namespace OutliersLib.ParameterTypes
                 Value = Default;
                 return;
             }
-            
+
             try
             {
                 Value = bool.Parse(input);
                 IsValid = true;
             }
-            catch(Exception e)
+            catch (ArgumentNullException)
             {
                 IsValid = false;
-                ErrorMessage = e.Message;
+                ErrorMessage = "Введите непустое значение";
+            }
+            catch (FormatException)
+            {
+                IsValid = false;
+                ErrorMessage = "Введенное значение имеет неверный формат";
             }
         }
 
@@ -65,6 +67,11 @@ namespace OutliersLib.ParameterTypes
                 ErrorMessage = this.ErrorMessage,
                 FullName = this.FullName
             };
+        }
+
+        public override object GetValue()
+        {
+            return Value;
         }
     }
 }

@@ -15,7 +15,7 @@
     <Content Update="Components\Internal.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\ModuleFormPage.razor">
+    <Content Update="Components\ModuleForm.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Content Update="Components\Table.razor">
@@ -36,12 +36,6 @@
     <Content Update="Components\Parameters\StringParameterComponent.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Pages\Algdocs.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Combdocs.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
     <Content Update="Pages\FormPage.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
@@ -52,6 +46,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OutliersLib\OutliersLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BlazorInputFile" Version="0.2.0" />
   </ItemGroup>
 
 </Project>

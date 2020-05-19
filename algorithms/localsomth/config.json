@@ -1,14 +1,18 @@
 {
-"return_doubles": {
-  "coolName": "Ипсользовать вероятность",
+  "bool": {
+    "return_doubles": {
+      "fullname": "Ипсользовать вероятность",
       "type": "bool",
       "default": false
-    },
-  "number_of_neighbours": {
-    "coolName": "Кол-во соседей",
-    "type": "int",
-    "default": 2,
-    "min": 1,
-    "max": 100
+    }
+  },
+  "int": {
+    "number_of_neighbours": {
+      "fullname": "Кол-во соседей",
+      "type": "int",
+      "default": 2,
+      "min": 1,
+      "max": 100
+    }
   }
 }

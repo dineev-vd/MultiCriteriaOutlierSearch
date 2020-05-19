@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO;
@@ -14,25 +13,32 @@ namespace OutliersLib
 {
     public static class Utils
     {
-        const string ConfigPath = "config.json";
-        private const string ConfigAdressAppend = "/config/";
-        public static HttpClient httpClient = new HttpClient();
+        const string configPath = "config.json";
+        private const string configAdressAppend = "/config/";
+        public static HttpClient Client = new HttpClient();
         public static Config Config = new Config();
-
+        
+        
         /// <summary>
         /// Считывает конфигурацию
         /// </summary>
         /// <returns></returns>
         public static void Read()
         {
-            Config config;
-            
-            // Считывание файла конфигурации
-            using(var fs = File.OpenText(ConfigPath))
+            Config config = new Config();
+            try
             {
-                config = JsonConvert.DeserializeObject<Config>(fs.ReadToEnd());
+                // Считывание файла конфигурации
+                using (var fs = File.OpenText(configPath))
+                {
+                    config = JsonConvert.DeserializeObject<Config>(fs.ReadToEnd());
+                }
             }
-            
+            catch
+            {
+                Console.WriteLine("Не удалось прочитать конфигурацию");
+            }
+
             // Опрашивание алгоритмов для сбора параметров
             FillParameters(config.Algorithms).Wait();
             FillParameters(config.Combinations).Wait();
@@ -49,8 +55,8 @@ namespace OutliersLib
         {
             foreach(var config in moduleConfigs)
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, config.Value.Uri + ConfigAdressAppend);
-                var response = await httpClient.SendAsync(request);
+                var request = new HttpRequestMessage(HttpMethod.Get, config.Value.Uri + configAdressAppend);
+                var response = await Client.SendAsync(request);
                 if(response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     continue;

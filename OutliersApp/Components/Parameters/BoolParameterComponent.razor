@@ -1,7 +1,7 @@
 ﻿@using OutliersLib.ParameterTypes
 @namespace OutliersApp.Components.Parameters
 
-<div class="custom-control custom-checkbox">
+<div class="custom-control custom-switch">
     <input type="checkbox" class="custom-control-input" id="check-@Id" @onchange="@(e => FormAsBool.SetValue(e.Value.ToString()))" checked="@FormAsBool.Value">
     <label class="custom-control-label" for="check-@Id">@(FormAsBool.FullName == string.Empty ? SettingsForm.Key : FormAsBool.FullName) </label>
 </div>

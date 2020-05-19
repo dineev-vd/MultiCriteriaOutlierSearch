@@ -1,66 +1,36 @@
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-                <th scope="col">value</th>
-            
-            @foreach (var resp in responses?.AlgResponses)
-            {
-                if (resp.Status == 200)
-                {
-                    <th scope="col">@resp.Name</th>
-                }
-            }
-            @foreach (var resp in responses.CombResponses)
-            {
-                if (resp.Status == 200)
-                {
-                    <th scope="col">@resp.Name</th>
-                }
-            }
-        </tr>
-        </thead>
-        <tbody>
-        @for (int i = 0; i < valueList.GetLength(0); i++)
-        {
+@if (ForTable.GetLength(0) > 1)
+{
+    <div class="table-responsive" id="value-table">
+        <table class="table">
+            <thead>
             <tr>
-                <th scope="row">@(i + 1)</th>
-                <td>
-                @for (int j = 0; j < valueList.GetLength(1); j++)
+                @for (int i = 0; i < ForTable.GetLength(1); i++)
                 {
-                    @($"{valueList[i, j]:F3} ")
-                }
-                </td>
-                @foreach (var resp in responses.AlgResponses)
-                {
-                    @if (resp.Status == 200)
-                    {
-                        <td>@($"{resp.Data[i]:F3}")</td>
-                    }
-                }
-                @foreach (var resp in responses.CombResponses)
-                {
-                    @if (resp.Status == 200)
-                    {
-                        <td>@($"{resp.Data[i]}")</td>
-                    }
+                    <th>@ForTable[0, i]</th>
                 }
             </tr>
-        }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+            @for (int i = 1; i < ForTable.GetLength(0); i++)
+            {
+                <tr>
+                    @for (int j = 0; j < ForTable.GetLength(1); j++)
+                    {
+                        <td>@ForTable[i,j]</td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
 
 @namespace OutliersApp.Components
-@using Models
 
 @code
 {
-    [Parameter]
-    public double[,] valueList { get; set; }
 
     [Parameter]
-    public Responses responses { get; set; }
+    public string[,] ForTable { get; set; }
 
 }

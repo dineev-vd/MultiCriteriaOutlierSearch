@@ -1,10 +1,9 @@
 import codecs
 import json
-
 from flask import Flask, request, jsonify
 from sklearn.ensemble import IsolationForest
 import numpy as np
-from sklearn import preprocessing
+
 
 
 
@@ -16,17 +15,32 @@ def dixon():
         data = np.array(request.json["Data"])
         params = request.json['Params']
 
-        data = preprocessing.MinMaxScaler().fit_transform(data)
+        n_estimators = 100
+        max_samples = "auto"
+        contamination = "auto"
 
-        clf = IsolationForest()
+        if "n_estimators" in params:
+            n_estimators = params["n_estimators"]
+
+        if "max_samples" in params:
+            max_samples = params["max_samples"]
+
+        if "contamination" in params:
+            contamination = params["contamination"]
+
+
+        clf = IsolationForest(n_estimators=n_estimators, max_samples=max_samples, contamination=contamination)
+
 
         indices = clf.fit_predict(data)
-        if params['return_doubles']:
-            indices = clf.score_samples(data)
-
+        indices = [0 if x==1 else 1 for x in indices.tolist()]
+        if params['ReturnDoubles']:
+            indices = -clf.score_samples(data)
+            indices = indices.tolist()
+        return jsonify({"message": "OK", "data": indices})
     except Exception as e:
         return jsonify({"message": str(e)}), 400
-    return jsonify({"message": "OK", "data": indices.tolist()})
+
 
 
 @app.route('/algorithms/isolationforest/config/', methods=['GET'])

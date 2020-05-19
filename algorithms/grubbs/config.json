@@ -4,12 +4,13 @@
       "type": "double",
       "min": 0.01,
       "max": 1,
-      "default": 0.01
+      "default": 0.01,
+      "fullName": "Уровень значимости"
     }
   },
   "select": {
     "method": {
-      "coolName": "Метод",
+      "fullName": "Метод",
       "type": "select",
       "options": [
         "double_sided",

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,7 +54,9 @@ namespace OutliersLib
             HttpResponseMessage response;
             try
             {
-                response = await Utils.httpClient.SendAsync(MakeRequest(incomingModuleRequest, data));
+                Logger.Push($"request sent {incomingModuleRequest.Name}");
+                response = await Utils.Client.SendAsync(MakeRequest(incomingModuleRequest, data));
+                Logger.Push($"response from {incomingModuleRequest.Name}");
             }
             catch (ArgumentException e)
             {

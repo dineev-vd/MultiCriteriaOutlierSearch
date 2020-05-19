@@ -1,6 +1,5 @@
 ﻿@using OutliersLib
 @using OutliersApp.Models
-@using OutliersApp.Models.Parameters
 @using System.Linq
 @using OutliersApp.Components.Parameters
 @using OutliersLib.ParameterTypes
@@ -22,21 +21,23 @@
 <div class="input-group">
     <div class="input-group-prepend">
         <select class="custom-select" id="inputGroupSelect04" @onchange="@OnChange">
-            <option selected disabled>Choose...</option>
+            <option selected disabled>Выберите тип параметра...</option>
             <option label="Double">double</option>
             <option label="Boolean">bool</option>
             <option label="String">string</option>
+            <option label="Integer">int</option>
         </select>
     </div>
-    <input type="text" placeholder="Введите имя..." @oninput=@(e => CustomName = e.Value.ToString())>
+    <input type="text" class="form-control" placeholder="Введите имя..." @oninput=@(e => CustomName = e.Value.ToString())>
     <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="button" @onclick=@AddSetting>Button</button>
+        <button class="btn btn-outline-secondary" type="button" @onclick=@AddSetting>Добавить</button>
     </div>
 </div>
 
 @{ int local = 0;}
 @foreach (var setting in Model.Settings)
 {
+    <div class="mb-3">
     @if (setting.Value is DoubleParameterModel)
     {
         <DoubleParameterComponent SettingsForm="@setting" OnDelete="@((i) => Model.Settings.Remove(i.Key))"></DoubleParameterComponent>
@@ -56,6 +57,13 @@
     {
         <StringParameterComponent SettingsForm="@setting" OnDelete="@((i) => Model.Settings.Remove(i.Key))"></StringParameterComponent>
     }
+    
+    @if (setting.Value is IntParameterModel)
+    {
+        <IntParameterComponent SettingsForm="@setting" OnDelete="@((i) => Model.Settings.Remove(i.Key))"></IntParameterComponent>
+    }
+    </div>
+    
     local++;
 }
 

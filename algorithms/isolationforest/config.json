@@ -1,20 +1,28 @@
 {
-    "Bool": {
+    "bool": {
       "ReturnDoubles":{
-	    "CoolName": "Возвращать вероятности",
+	    "fullname": "Возвращать вероятности",
         "Default": true
 	  }
     },
   "int": {
     "n_estimators": {
-      "CoolName": "N-Estimators",
+      "fullname": "N-Estimators",
       "Default": 2,
       "Min": 0
     },
     "max_samples": {
-      "CoolName": "Max Samples",
-      "Default": 2,
+      "fullname": "Max Samples",
+      "Default": 256,
       "Min": 0
+    }
+  },
+  "double": {
+    "contamination": {
+      "fullname": "Доля выбросов",
+      "Default": 0.1,
+      "Min": 0,
+      "Max": 1
     }
   }
 	

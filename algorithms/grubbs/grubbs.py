@@ -1,5 +1,4 @@
 import codecs
-
 from flask import request, jsonify, Flask
 from outliers import smirnov_grubbs as gr
 import json

@@ -1,4 +1,4 @@
-﻿namespace OutliersApp.Models
+﻿﻿namespace OutliersApp.Models
 {
     public abstract class BaseFormModel
     {

@@ -3,26 +3,26 @@ using OutliersApp.Models;
 
 namespace OutliersApp.Components
 {
-    public partial class ModuleFormPage
+    public partial class ModuleForm
     {
         [Parameter] public bool HasWeight { get; set; }
         [Parameter] public EventCallback<ModuleFormModel> OnDelete { get; set; }
         [Parameter] public string Id { get; set; }
 
-        [Parameter] public ModuleFormModel ModuleFormModel { get; set; }
+        [Parameter] public ModuleFormModel Model { get; set; }
 
         //TODO:
         //Сделать анимации появления на переключении внутренний/внешний
 
         public void EnableName(ChangeEventArgs args)
         {
-            ModuleFormModel.IsInternal = true;
+            Model.IsInternal = true;
             //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "show");
         }
 
         public void DisableName(ChangeEventArgs args)
         {
-            ModuleFormModel.IsInternal = false;
+            Model.IsInternal = false;
             //IJSRuntime.InvokeVoidAsync("myCollapse", $"choose_{Id}", "hide");
         }
 

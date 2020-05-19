@@ -1,9 +1,6 @@
-﻿@using OutliersLib
-@using OutliersApp.Models.Parameters
-@using OutliersApp.Models
-@using OutliersApp.Components.Parameters
-@using Microsoft.AspNetCore.Components.Web
+﻿@using OutliersApp.Components.Parameters
 @using OutliersLib.ParameterTypes
+@using OutliersApp.Models 
 @namespace OutliersApp.Components
 
 <div class="input-group my-2">
@@ -15,10 +12,10 @@
 
     @*Поле выбора справа*@
     <select class="custom-select @(Model.NotSelected ? "is-invalid" : "")" @onchange="@OnSelect">
-        <option label="Выберите алгоритм..." disabled selected="@(Model.Selected.Name == string.Empty)"></option>
+        <option label="Выберите сервис..." disabled selected="@(Model.Selected.Name == string.Empty)"></option>
         @foreach (var module in Model.InternalModulesList)
         {
-            <option label="@module.CoolName" selected="@(Model.Selected.Name == module.Name)">@module.Name</option>
+            <option label="@module.FullName" selected="@(Model.Selected.Name == module.Name)">@module.Name</option>
         }
     </select>
 
@@ -29,7 +26,7 @@
 {
     @if (setting.Value is DoubleParameterModel)
     {
-        <DoubleParameter SettingsForm="@setting"></DoubleParameter>
+        <DoubleParameterComponent SettingsForm="@setting"></DoubleParameterComponent>
     }
 
     @if (setting.Value is SelectParameterModel)
@@ -49,7 +46,7 @@
 
     @if (setting.Value is IntParameterModel)
     {
-        <IntParameterComponent SettingForm="@setting"></IntParameterComponent>
+        <IntParameterComponent SettingsForm="@setting"></IntParameterComponent>
     }
     local++;
 }

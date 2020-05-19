@@ -18,6 +18,7 @@ namespace OutliersLib.ParameterTypes
             }
         }
 
+        [JsonIgnore]
         public string Value { get; set; }
 
         public StringParameterModel()
@@ -25,10 +26,7 @@ namespace OutliersLib.ParameterTypes
             Default = String.Empty;
         }
 
-        public override string DefaultToString()
-        {
-            return Default.ToString();
-        }
+      
 
         public override void SetValue(string input)
         {
@@ -48,6 +46,11 @@ namespace OutliersLib.ParameterTypes
                 ErrorMessage = this.ErrorMessage,
                 FullName = this.FullName
             };
+        }
+
+        public override object GetValue()
+        {
+            return Value;
         }
     }
 }

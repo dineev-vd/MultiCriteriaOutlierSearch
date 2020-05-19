@@ -14,7 +14,6 @@ namespace OutliersLib.ParameterTypes
         [JsonIgnore]
         public string StringValue { get; set; }
         
-        public abstract string DefaultToString();
         public abstract void SetValue(string input);
 
         public ParameterBase()
@@ -28,5 +27,7 @@ namespace OutliersLib.ParameterTypes
 
         // public abstract object Value { get; set; }
         public abstract object Clone();
+
+        public abstract object GetValue();
     }
 }

@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO.Enumeration;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using OutliersApp.Models.Parameters;
 
 namespace OutliersLib.ParameterTypes
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class Parameters : IEnumerable<KeyValuePair<string, ParameterBase>>
+    public class Parameters
     {
         [JsonProperty("bool")] public Dictionary<string, BoolParameterModel> BoolParameters { get; set; }
         [JsonProperty("int")] public Dictionary<string, IntParameterModel> IntParameters { get; set; }
@@ -15,8 +12,7 @@ namespace OutliersLib.ParameterTypes
         [JsonProperty("string")] public Dictionary<string, StringParameterModel> StringParameters { get; set; }
         [JsonProperty("select")] public Dictionary<string, SelectParameterModel> SelectParameters { get; set; }
 
-
-        public IEnumerator<KeyValuePair<string, ParameterBase>> GetEnumerator()
+        public Dictionary<string, ParameterBase> ToDict()
         {
             var dict = new Dictionary<string, ParameterBase>();
 
@@ -50,27 +46,7 @@ namespace OutliersLib.ParameterTypes
                     dict.Add(parameter.Key, parameter.Value);
             }
 
-            return dict.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        [JsonIgnore]
-        public int Count
-        {
-            get
-            {
-                int count = 0;
-                foreach (var item in this)
-                {
-                    count++;
-                }
-
-                return count;
-            }
+            return dict;
         }
     }
 }

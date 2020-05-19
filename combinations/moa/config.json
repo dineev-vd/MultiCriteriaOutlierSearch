@@ -1,0 +1,9 @@
+{
+  "int": {
+    "n_buckets": {
+      "fullname": "Кол-во подгрупп",
+      "min": 1,
+      "default": 1
+    }
+  }
+}

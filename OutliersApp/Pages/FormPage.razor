@@ -1,102 +1,193 @@
 ﻿@page "/"
+@using BlazorInputFile
+@using Newtonsoft.Json
+@using OutliersApp.Models
+@using OutliersLib
 
 <div class="container bg-light border rounded p-3 shadow">
-@if (ConfigNotLoaded)
-{
-    <div class="container mb-4 border border-danger rounded p-3">
-        Не удалось загрузить Config.
-    </div>
-}
-
-<form class="needs-validation">
-    @*Алгоритмы*@
-    <div class="container mb-4 border rounded p-3">
-        <h4>Алгоритмы</h4>
-        <h6 class="text-muted mb-2">Список алгоритмов для выполнения</h6>
-        <div role="tablist" id="accordion-1">
-            @{ var id = 0; }
-            @foreach (var item in UserInstance.Algorithms)
-            {
-                string local = id + "-1";
-                <ModuleFormPage Id="@local" ModuleFormModel="@item" OnDelete=@(mod => UserInstance.Algorithms.Remove(mod)) HasWeight="@true"></ModuleFormPage>
-                id++;
-            }
-        </div>
-        <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClick">Добавить алгоритм</button>
-    </div>
-
-    @*Комбинации*@
-    <div class="container mb-4 border rounded p-3">
-        <h4>Комбинации</h4>
-        <h6 class="text-muted mb-2">Список комбинаций для выполнения</h6>
-        <div role="tablist" id="accordion-2">
-            @{ var idd = 0; }
-            @foreach (var item in UserInstance.Combinations)
-            {
-                string local = idd + "-2";
-                <ModuleFormPage @key=item Id="@local" ModuleFormModel="@item" OnDelete=@(mod => UserInstance.Combinations.Remove(mod)) HasWeight="@false"></ModuleFormPage>
-                idd++;
-            }
-        </div>
-        <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnClickCombs">Добавить комбинацию</button>
-    </div>
-
-    <div class="container mb-4 border rounded p-3">
-        <ValuesInput UserInstance="@UserInstance"></ValuesInput>
-        <button class="btn btn-success btn-block btn-sm" type="button" @onclick="OnSendClick">
-            @if (IsLoading)
-            {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            }
-            Отправить
-        </button>
-    </div>
-</form>
-@if (!IsValid)
-{
-    <p class="text-danger collapse @(IsValid ? "" : "show")">Проверьте поля!</p>
-}
-
-
-
-
-@foreach (var response in responses.AlgResponses)
-{
-    if (response.Status != 200)
+    @if (ConfigNotLoaded)
     {
         <div class="container mb-4 border border-danger rounded p-3">
-            <p>
-                Алгоритм @response.Name отработал с ошибкой:
-                <ul>
-                    <li>Статус: @response.Status</li>
-                    <li>Сообщение: @response.Message</li>
-                </ul>
-            </p>
+            Не удалось загрузить конфигурацию.
         </div>
     }
-}
 
+    <form class="needs-validation">
+        @*Алгоритмы*@
+        <div class="container mb-4 border rounded p-3">
+            <h4>Алгоритмы</h4>
+            <h6 class="text-muted mb-2">Список алгоритмов для выполнения</h6>
+            <div role="tablist" id="accordion-1">
+                @{ var id = 0; }
+                @foreach (var item in UserInstance.Algorithms)
+                {
+                    string local = id + "-1";
+                    <ModuleForm Id="@local" Model="@item" OnDelete=@(mod => UserInstance.Algorithms.Remove(mod)) HasWeight="@true"></ModuleForm>
+                    id++;
+                }
+            </div>
+            <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnAddAlgorithm">Добавить алгоритм</button>
+        </div>
 
-@foreach (var response in responses.CombResponses)
-{
-    if (response.Status != 200)
+        @*Комбинации*@
+        <div class="container mb-4 border rounded p-3">
+            <h4>Комбинации</h4>
+            <h6 class="text-muted mb-2">Список комбинаций для выполнения</h6>
+            <div role="tablist" id="accordion-2">
+                @{ var idd = 0; }
+                @foreach (var item in UserInstance.Combinations)
+                {
+                    string local = idd + "-2";
+                    <ModuleForm @key=item Id="@local" Model="@item" OnDelete=@(mod => UserInstance.Combinations.Remove(mod)) HasWeight="@false"></ModuleForm>
+                    idd++;
+                }
+            </div>
+            <button class="btn btn-primary btn-block btn-sm" type="button" @onclick="OnAddCombination">Добавить комбинацию</button>
+        </div>
+
+        <div class="container mb-4 border rounded p-3">
+            <InputFile class="mb-3" OnChange="@(async (e) => await HandleFileSelected(e))"/>
+            <ValuesInput UserInstance="@UserInstance"></ValuesInput>
+
+            <button class="btn btn-success btn-block btn-sm" type="button" @onclick="OnSend">
+                @if (IsLoading)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                }
+                Отправить
+            </button>
+
+        </div>
+    </form>
+    @if (!IsValid)
     {
-        <div class="container mb-4 border border-danger rounded p-3">
-            <p>
-                Комбинация @response.Name отработала с ошибкой:
-                <ul>
-                    <li>Статус: @response.Status</li>
-                    <li>Сообщение: @response.Message</li>
-                </ul>
-            </p>
-        </div>
+        <p class="text-danger collapse @(IsValid ? "" : "show")">Проверьте поля!</p>
     }
-}
 
-<Table valueList="@UserInstance.Values" responses="@responses"></Table>
+
+    <Table ForTable="@ForTable"></Table>
+    <button class="btn btn-primary mb-3" type="button" @onclick="DownloadFile">Экспорт в csv</button>
+
+    @foreach (var response in Responses.AlgResponses)
+    {
+        if (response.Status != 200)
+        {
+            <div class="container mb-4 border border-danger rounded p-3">
+                <p>
+                    Алгоритм @response.Name отработал с ошибкой:
+                    <ul>
+                        <li>Статус: @response.Status</li>
+                        <li>Сообщение: @response.Message</li>
+                    </ul>
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="container mb-4 border border-success rounded p-3">
+                <p>
+                    Алгоритм @response.Name отработал успешно:
+                    <ul>
+                        <li>Статус: @response.Status</li>
+                        <li>Сообщение: @response.Message</li>
+                    </ul>
+                </p>
+            </div>
+        }
+    }
+
+
+
+
+    @foreach (var response in Responses.CombResponses)
+    {
+        if (response.Status != 200)
+        {
+            <div class="container mb-4 border border-danger rounded p-3">
+                <p>
+                    Комбинация @response.Name отработала с ошибкой:
+                    <ul>
+                        <li>Статус: @response.Status</li>
+                        <li>Сообщение: @response.Message</li>
+                    </ul>
+                </p>
+            </div>
+        }
+    }
+
+
 
 </div>
 @*TODO Проверка на корректность формы
 *@
 
 @inject IJSRuntime IJSRuntime
+
+@code {
+
+    public async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        using (var reader = new System.IO.StreamReader(file.Data))
+        {
+            string content = await reader.ReadToEndAsync();
+            UserInstance.ValuesString = content;
+        }
+    }
+
+    public async void SaveAs(string filename, byte[] data)
+    {
+        await IJSRuntime.InvokeAsync<object>(
+            "saveAsFile",
+            filename,
+            Convert.ToBase64String(data));
+    }
+
+    void DownloadFile()
+    {
+        string text = "";
+        for (int i = 0; i < ForTable.GetLength(0); i++)
+        {
+            for (int j = 0; j < ForTable.GetLength(1); j++)
+            {
+                text += ForTable[i, j] + (j != ForTable.GetLength(1) - 1 ? ";" : "");
+            }
+            text += Environment.NewLine;
+        }
+
+
+    //var text = "Hello, world!";
+        var bytes = System.Text.Encoding.UTF8.GetBytes(text);
+        SaveAs("Results.csv", bytes);
+    }
+
+    public async Task Send()
+    {
+        HttpClient client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, Converters.ApiAdress);
+        request.Content = new StringContent(JsonConvert.SerializeObject(UserInstance.ToRequestData()),
+            System.Text.Encoding.UTF8, "application/json");
+        var response = new HttpResponseMessage();
+
+        response = await client.SendAsync(request);
+
+
+        var algsandcombs = JsonConvert.DeserializeObject<Responses>(await response.Content.ReadAsStringAsync());
+        if (algsandcombs is null)
+        {
+            Responses = new Responses();
+        }
+        else
+        {
+            Responses = algsandcombs;
+        }
+
+        var str = await response.Content.ReadAsStringAsync();
+        var req = await request.Content.ReadAsStringAsync();
+        Logger.Push(str);
+        Logger.Push(req);
+        ForTable = ToTable();
+        StateHasChanged();
+    }
+
+}

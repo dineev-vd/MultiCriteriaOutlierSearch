@@ -46,7 +46,7 @@ namespace OutliersApp.Models
             var result = new Dictionary<string, object>();
             foreach (var setting in Settings)
             {
-                result.Add(setting.Key, setting.Value);
+                result.Add(setting.Key, setting.Value.GetValue());
             }
 
             return result;

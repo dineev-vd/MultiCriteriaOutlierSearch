@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace OutliersApp.Models
 {
-    public class Form
+    public class FormModel
     {
         public List<ModuleFormModel> Algorithms { get; set; }
         public List<ModuleFormModel> Combinations { get; set; }
@@ -15,7 +15,7 @@ namespace OutliersApp.Models
             {
                 try
                 {
-                    Values = Utils.ParseInput(ValuesString);
+                    Values = Converters.ParseInput(ValuesString);
                 }
                 catch
                 {
@@ -50,7 +50,7 @@ namespace OutliersApp.Models
 
         public string ValuesString { get; set; }
 
-        public Form()
+        public FormModel()
         {
             Algorithms = new List<ModuleFormModel>();
             Combinations = new List<ModuleFormModel>();

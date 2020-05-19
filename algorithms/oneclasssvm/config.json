@@ -1,0 +1,17 @@
+{
+  "select": {
+    "kernel": {
+      "default": "rbf",
+      "options": [
+        "rbf","linear","poly","sigmoid"
+      ]
+    }
+  },
+  "int": {
+    "degree": {
+      "default": 3,
+      "min": 1,
+      "max": 10
+    }
+  }
+}

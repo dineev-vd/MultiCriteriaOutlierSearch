@@ -1,46 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.Serialization;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using Newtonsoft.Json;
 using OutliersLib;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace outliers_api
 {
-    [Route("api/")]
+    [Route("/")]
     public class OutliersController : Controller
     {
-        // POST /api/outliers
+        // POST /
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] OutlierRequestData data)
         {
             // Проверка на корректность входных данных в body
-            if(data is null)
+            if (data is null)
             {
-                return BadRequest();
+                Logger.Push("Неверный формат входящего запроса");
+                return BadRequest("Неверный формат входящего запроса");
+            }
+
+            try
+            {
+                data.Check();
+            }
+            catch (Exception e)
+            {
+                Logger.Push(e.Message);
+                return BadRequest(e.Message);
             }
 
             var algResponses = await data.FetchAlgorithms();
+            Logger.Push("algorithms finished");
             var combResponses = await data.FetchCombinations(algResponses);
+            Logger.Push("combinations finished");
 
             return Ok(new {algResponses, combResponses});
         }
-    }
 
-    [Route("config/")]
-    public class ConfigController : Controller
-    {
+        // GET /
         [HttpGet]
         public IActionResult Get()
         {
-            Utils.Read();
+            try
+            {
+                //Utils.Read();
+                Logger.Push("GET /");
+            }
+            catch(Exception e)
+            {
+                Logger.Push(e.Message);
+            }
+
             return Ok(Utils.Config);
         }
     }

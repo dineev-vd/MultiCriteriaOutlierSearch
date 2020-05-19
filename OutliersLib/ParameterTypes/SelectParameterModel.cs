@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using OutliersApp.Models.Parameters;
 
 namespace OutliersLib.ParameterTypes
 {
@@ -12,7 +11,15 @@ namespace OutliersLib.ParameterTypes
 
         public string Default
         {
-            get => _default;
+            get
+            {
+                if (!Options.Contains(_default))
+                {
+                    return Options.Count > 0 ? Options.First() : string.Empty;
+                }
+
+                return _default;
+            }
             set
             {
                 Value = value;
@@ -20,6 +27,7 @@ namespace OutliersLib.ParameterTypes
             }
         }
 
+        [JsonIgnore]
         public string Value { get; set; }
         
         [JsonRequired]
@@ -28,12 +36,10 @@ namespace OutliersLib.ParameterTypes
         public SelectParameterModel()
         {
             Default = string.Empty;
+            Options = new List<string>();
         }
 
-        public override string DefaultToString()
-        {
-            return Default.ToString();
-        }
+       
 
         public override void SetValue(string input)
         {
@@ -42,6 +48,7 @@ namespace OutliersLib.ParameterTypes
             if (!Options.Contains(input))
             {
                 IsValid = false;
+                ErrorMessage = "Недопустимое значение: " + input;
                 return;
             }
 
@@ -63,6 +70,11 @@ namespace OutliersLib.ParameterTypes
                 ErrorMessage = this.ErrorMessage,
                 FullName = this.FullName
             };
+        }
+
+        public override object GetValue()
+        {
+            return Value;
         }
     }
 }

@@ -2,26 +2,37 @@
   "algorithms": {
     "grubbs": {
       "uri": "http://localhost/algorithms/grubbs",
-      "coolname": "Grubbs algorithm"
+      "coolname": "Алгоритм Граббса"
     },
-
     "dixon": {
       "uri": "http://localhost/algorithms/dixon",
-      "coolname": "Dixon algorithm"
+      "coolname": "Алгоритм Диксона"
     },
     "threesigma": {
       "uri": "http://localhost/algorithms/threesigma",
-      "coolname": "Three sigma method"
+      "coolname": "Критерий трёх сигм"
     },
-    "serega":{
-      "uri":"http://localhost/algorithms/dixon",
-      "coolname": "Polincha lox"
-    }
+	"chauvenet":{
+	"uri": "http://localhost/algorithms/chauvenet",
+      "coolname": "Custom Module"
+	},
+	"isolationforest":{
+	"uri": "http://localhost/algorithms/isolationforest",
+      "coolname": "Isolation Forest"
+	},
+	"lof":{
+	  "uri": "http://localhost/algorithms/localsomth",
+    "coolname": "Local Outlier Factor"
+  }
   },
   "combinations": {
     "average": {
       "uri": "http://localhost/combinations/average",
-      "coolname": "Average"
+      "coolname": "Среднее значение"
+    },
+"majority":{
+      "uri": "http://localhost/combinations/majority",
+      "coolname": "Голосование большинством"
     }
   }
 }

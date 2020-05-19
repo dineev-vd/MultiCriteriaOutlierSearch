@@ -2,7 +2,6 @@
 using System.Globalization;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
-using OutliersApp.Models.Parameters;
 
 namespace OutliersLib.ParameterTypes
 {
@@ -36,7 +35,8 @@ namespace OutliersLib.ParameterTypes
                 _default = value;
             }
         }
-
+        
+        [JsonIgnore]
         public double Value
         {
             get => _value;
@@ -57,10 +57,7 @@ namespace OutliersLib.ParameterTypes
             Max = double.MaxValue;
             Default = 0;
         }
-        public override string DefaultToString()
-        {
-            return Default.ToString();
-        }
+        
 
         public override void SetValue(string input)
         {
@@ -72,16 +69,31 @@ namespace OutliersLib.ParameterTypes
                 Value = Default;
                 return;
             }
-            
+
             try
             {
-                Value = double.Parse(input.Replace('.',','));
+                Value = double.Parse(input.Replace('.', ','));
                 IsValid = true;
             }
-            catch(Exception e)
+            catch (ArgumentNullException)
             {
                 IsValid = false;
-                ErrorMessage = e.Message;
+                ErrorMessage = "Введите непустое значение";
+            }
+            catch (FormatException)
+            {
+                IsValid = false;
+                ErrorMessage = "Введенное значение имеет неверный формат";
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                IsValid = false;
+                ErrorMessage = $"Введите значение в интервале от {Min} до {Max}";
+            }
+            catch (OverflowException)
+            {
+                IsValid = false;
+                ErrorMessage = "Введенное значение выходит за пределы типа Double";
             }
         }
 
@@ -99,6 +111,11 @@ namespace OutliersLib.ParameterTypes
                 ErrorMessage = this.ErrorMessage,
                 FullName = this.FullName
             };
+        }
+
+        public override object GetValue()
+        {
+            return Value;
         }
     }
 }
