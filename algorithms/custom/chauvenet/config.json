@@ -1,0 +1,14 @@
+    {
+        "double": {
+            "alpha": {
+                "type": "double",
+                "default": 0.01
+            }
+        },
+        "bool": {
+            "customselect": {
+                "coolName": "Custom Bool",
+                "default": true
+            }
+        }
+    }
