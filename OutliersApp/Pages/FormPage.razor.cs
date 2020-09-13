@@ -3,6 +3,7 @@ using OutliersApp.Models;
 using OutliersLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OutliersApp.Components;
@@ -17,7 +18,7 @@ namespace OutliersApp.Pages
         bool IsValid { get; set; }
         bool IsLoading { get; set; }
         bool ConfigNotLoaded { get; set; }
-        
+
         private string[,] ForTable { get; set; }
 
         List<PredefinedModule> PredefinedAlgorithms { get; set; }
@@ -145,19 +146,19 @@ namespace OutliersApp.Pages
                 columnsCount++;
             }
             
-            string[,] array = new string[UserInstance.Values.GetLength(0) + 1,columnsCount];
+            string[,] array = new string[UserInstance.Values.GetLength(0) + 1,columnsCount + UserInstance.NotUsedColumns];
             
             // Заполняем колонки
             array[0, 0] = "#";
 
-            for (int i = 1; i < 1 + UserInstance.Values.GetLength(1); i++)
+            for (int i = UserInstance.NotUsedColumns+1; i < 1 + UserInstance.Values.GetLength(1) + UserInstance.NotUsedColumns; i++)
             {
-                array[0, i] = "Признак " + i;
+                array[0, i] = "Признак " + (i - UserInstance.NotUsedColumns);
             }
             
             for (int i = 0; i < columnNames.Count; i++)
             {
-                array[0, i + 1 + UserInstance.Values.GetLength(1)] = columnNames[i];
+                array[0, i + 1 + UserInstance.NotUsedColumns + UserInstance.Values.GetLength(1)] = columnNames[i];
             }
             
             
@@ -168,10 +169,39 @@ namespace OutliersApp.Pages
                 array[i, 0] = i.ToString();
                 for (int j = 1; j < UserInstance.Values.GetLength(1) + 1; j++)
                 {
-                    array[i, j] = UserInstance.Values[i - 1, j - 1].ToString();
+                    array[i, j + UserInstance.NotUsedColumns] = UserInstance.Values[i - 1, j - 1].ToString();
                 }
             }
             
+            // 11.08.2020 - заполнение колонок, которые не используются при анализе
+            try
+            {
+                string[] linesSplit = UserInstance.ValuesString.Split('\n');
+                string[,] sourceArray = new string[linesSplit.Length, linesSplit.First().Split(';').Length];
+
+                for (int i = 0; i < sourceArray.GetLength(0); i++)
+                {
+                    string[] curLine = linesSplit[i].Split(';');
+                    for (int j = 0; j < curLine.Length; j++)
+                    {
+                        sourceArray[i, j] = curLine[j];
+                    }
+                }
+
+                for (int j = 1; j < 1 + UserInstance.NotUsedColumns; j++)
+                {
+                    array[0, j] = "Название " + j;
+                    for (int i = 1; i < UserInstance.Values.GetLength(0) + 1; i++)
+                    {
+                        array[i, j] = sourceArray[i-1, j-1];
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
             // Заполняем алгоритмы
             int curIndex = 1 + UserInstance.Values.GetLength(1);
             foreach (var alg in Responses.AlgResponses)
@@ -183,7 +213,7 @@ namespace OutliersApp.Pages
 
                 for (int i = 1; i < alg.Data.Count + 1; i++)
                 {
-                    array[i, curIndex] = alg.Data[i - 1].ToString();
+                    array[i, curIndex + UserInstance.NotUsedColumns] = alg.Data[i - 1].ToString();
                 }
 
                 curIndex++;
@@ -199,7 +229,7 @@ namespace OutliersApp.Pages
 
                 for (int i = 1; i < comb.Data.Count + 1; i++)
                 {
-                    array[i, curIndex] = comb.Data[i - 1].ToString();
+                    array[i, curIndex + UserInstance.NotUsedColumns] = comb.Data[i - 1].ToString();
                 }
 
                 curIndex++;

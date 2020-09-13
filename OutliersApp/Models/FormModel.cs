@@ -5,9 +5,10 @@ namespace OutliersApp.Models
 {
     public class FormModel
     {
-        public List<ModuleFormModel> Algorithms { get; set; }
-        public List<ModuleFormModel> Combinations { get; set; }
+        public List<ModuleFormModel> Algorithms { get; }
+        public List<ModuleFormModel> Combinations { get; }
         public double[,] Values { get; set; }
+        public int NotUsedColumns { get; set; }
 
         public bool ValuesValid
         {
@@ -15,7 +16,7 @@ namespace OutliersApp.Models
             {
                 try
                 {
-                    Values = Converters.ParseInput(ValuesString);
+                    Values = Converters.ParseInput(ValuesString, NotUsedColumns);
                 }
                 catch
                 {
@@ -55,6 +56,7 @@ namespace OutliersApp.Models
             Algorithms = new List<ModuleFormModel>();
             Combinations = new List<ModuleFormModel>();
             Values = new double[0, 0];
+            NotUsedColumns = 2;
         }
 
         public OutlierRequestData ToRequestData()

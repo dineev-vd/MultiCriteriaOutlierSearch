@@ -51,10 +51,10 @@ namespace OutliersApp.Models
             return result;
         }
 
-        public static double[,] ParseInput(string input)
+        public static double[,] ParseInput(string input, int NotUsedColumns)
         {
             string[] rows = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            double[,] result = new double[rows.Length, rows.First().Split(';').Length];
+            double[,] result = new double[rows.Length, rows.First().Split(';').Length - NotUsedColumns];
 
 
             for (int i = 0; i < result.GetLength(0); i++)
@@ -62,7 +62,7 @@ namespace OutliersApp.Models
                 string[] doubleStrings = rows[i].Split(';');
                 for (int j = 0; j < result.GetLength(1); j++)
                 {
-                    result[i, j] = double.Parse(doubleStrings[j].Replace(',','.'), new NumberFormatInfo { NumberDecimalSeparator = "." });
+                    result[i, j] = double.Parse(doubleStrings[j + NotUsedColumns].Replace(',','.'), new NumberFormatInfo { NumberDecimalSeparator = "." });
                 }
             }
 
